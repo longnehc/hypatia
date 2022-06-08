@@ -1,0 +1,24 @@
+# Ubuntu 20.04 LTS
+os: linux
+dist: focal
+
+language: cpp
+
+# Command(s) to install dependencies
+before_install:
+  - test -n $CC && unset CC
+  - test -n $CXX && unset CXX
+  - pyenv global 3.7
+  - bash hypatia_install_dependencies.sh
+
+# Command(s) to build
+install:
+  - bash hypatia_build.sh --travis
+
+# Command(s) to run tests and examples
+script:
+  - bash hypatia_run_tests.sh
+
+# Command(s) to calculate coverage
+after_success:
+  - echo "Success"
