@@ -707,9 +707,9 @@ PointToPointLaserNetDevice::EnableUtilizationTracking(int64_t interval_ns) {
 void
 PointToPointLaserNetDevice::TrackUtilization(bool next_state_is_on) {
     if (m_utilization_tracking_enabled) {
-
         // Current time in nanoseconds
         int64_t now_ns = Simulator::Now().GetNanoSeconds();
+ 
         while (now_ns >= m_current_interval_end) {
 
             // Add everything until the end of the interval
@@ -720,6 +720,7 @@ PointToPointLaserNetDevice::TrackUtilization(bool next_state_is_on) {
             }
 
             // Save into the utilization array
+           
             m_utilization.push_back(((double) m_busy_time_counter_ns) / ((double) m_interval_ns));
 
             // This must match up
@@ -731,6 +732,10 @@ PointToPointLaserNetDevice::TrackUtilization(bool next_state_is_on) {
             m_prev_time_ns = m_current_interval_end;
             m_current_interval_start += m_interval_ns;
             m_current_interval_end += m_interval_ns;
+            int len = this->GetQueue()->GetNPackets();
+            m_queuelen.push_back(len);
+            //get max queue lenth
+            //m_queuelen.push_back((this->GetQueue()->GetMaxSize()).GetValue ());
         }
 
         // If not at the end of a new interval, just keep track of it all
@@ -753,6 +758,23 @@ const std::vector<double>&
 PointToPointLaserNetDevice::FinalizeUtilization() {
     TrackUtilization(!m_current_state_is_on);
     return m_utilization;
+}
+
+const std::vector<int>&
+PointToPointLaserNetDevice::GetQueueLen(){
+       return m_queuelen;
+}
+
+const std::vector<int>&
+PointToPointLaserNetDevice::TraceQueueLength() {
+    if (m_utilization_tracking_enabled) {
+      int64_t now_ns = Simulator::Now().GetNanoSeconds();
+      while (now_ns >= m_current_interval_end) {
+          int len = this->GetQueue()->GetNPackets();
+          m_queuelen.push_back(len);
+      }
+    }
+     return m_queuelen;
 }
 
 

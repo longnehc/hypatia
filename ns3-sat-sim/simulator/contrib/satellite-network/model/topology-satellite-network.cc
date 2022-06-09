@@ -447,6 +447,7 @@ namespace ns3 {
 
             // Open CSV file
             FILE* file_utilization_csv = fopen((m_basicSimulation->GetLogsDir() + "/isl_utilization.csv").c_str(), "w+");
+            fprintf(file_utilization_csv, "m_islNetDevices size: %d\n", m_islNetDevices.GetN());
 
             // Go over every ISL network device
             for (size_t i = 0; i < m_islNetDevices.GetN(); i++) {
@@ -455,7 +456,6 @@ namespace ns3 {
                 std::pair<int32_t, int32_t> src_dst = m_islFromTo[i];
                 int64_t interval_left_side_ns = 0;
                 for (size_t j = 0; j < utilization.size(); j++) {
-
                     // Only write if it is the last one, or if the utilization is different from the next
                     if (j == utilization.size() - 1 || utilization[j] != utilization[j + 1]) {
 
@@ -478,7 +478,7 @@ namespace ns3 {
             } 
             fprintf(file_utilization_csv, "ISL delay information\n");
 
-            // Go over every ISL network device
+            // Go over every pair of ISL network devices to get ISL delay
             for (size_t i = 0; i < m_islNetDevices.GetN() - 1; i += 2) {
                 Ptr<PointToPointLaserNetDevice> src_dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
                 Ptr<PointToPointLaserNetDevice> dst_dev = m_islNetDevices.Get(i + 1)->GetObject<PointToPointLaserNetDevice>();
@@ -486,7 +486,21 @@ namespace ns3 {
                 Ptr<MobilityModel> receiverMobility = dst_dev->GetNode()->GetObject<MobilityModel>();
                 //Ptr<PointToPointLaserChannel> ch = src_dev->GetChannel()->GetObject<PointToPointLaserChannel>();
                 Time delay = src_dev->GetChannel()->GetObject<PointToPointLaserChannel>()->GetDelay(senderMobility, receiverMobility);
-                fprintf(file_utilization_csv, "%f\n", delay.GetDouble());
+                fprintf(file_utilization_csv, "%f\n", delay.GetSeconds());
+            }
+           
+
+            for (size_t i = 0; i < m_islNetDevices.GetN(); i++) {
+                Ptr<PointToPointLaserNetDevice> dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
+                const std::vector<int> qlen = dev->GetQueueLen();
+                fprintf(file_utilization_csv, "dev num: %lu\n", i);
+                fprintf(file_utilization_csv, "queue sample times: %lu\n", qlen.size());
+                double sum = 0;
+                for (size_t i = 0; i < qlen.size(); i++) {
+                    //fprintf(file_utilization_csv, "queue len: %d\n", qlen[i]);
+                    sum += qlen[i];
+                }
+                fprintf(file_utilization_csv, "avg queue len: %f\n", (double)sum/(double)qlen.size());
             }
             // Close CSV file
             fclose(file_utilization_csv);
