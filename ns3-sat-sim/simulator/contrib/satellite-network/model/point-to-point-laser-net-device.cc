@@ -732,8 +732,8 @@ PointToPointLaserNetDevice::TrackUtilization(bool next_state_is_on) {
             m_prev_time_ns = m_current_interval_end;
             m_current_interval_start += m_interval_ns;
             m_current_interval_end += m_interval_ns;
-            int len = this->GetQueue()->GetNPackets();
-            m_queuelen.push_back(len);
+            //int len = this->GetQueue()->GetNPackets();
+            //m_queuelen.push_back(len);
             //get max queue lenth
             //m_queuelen.push_back((this->GetQueue()->GetMaxSize()).GetValue ());
         }
@@ -759,23 +759,7 @@ PointToPointLaserNetDevice::FinalizeUtilization() {
     TrackUtilization(!m_current_state_is_on);
     return m_utilization;
 }
-
-const std::vector<int>&
-PointToPointLaserNetDevice::GetQueueLen(){
-       return m_queuelen;
-}
-
-const std::vector<int>&
-PointToPointLaserNetDevice::TraceQueueLength() {
-    if (m_utilization_tracking_enabled) {
-      int64_t now_ns = Simulator::Now().GetNanoSeconds();
-      while (now_ns >= m_current_interval_end) {
-          int len = this->GetQueue()->GetNPackets();
-          m_queuelen.push_back(len);
-      }
-    }
-     return m_queuelen;
-}
+ 
 
 
 } // namespace ns3

@@ -81,8 +81,10 @@ int main(int argc, char *argv[]) {
     // Schedule pings
     PingmeshScheduler pingmeshScheduler(basicSimulation, topology); // Requires enable_pingmesh_scheduler=true
 
+    topology->CollectDeviceQueueLength();
     // Run simulation
     basicSimulation->Run();
+
 
     // Write flow results
     tcpFlowScheduler.WriteResults();
@@ -95,6 +97,8 @@ int main(int argc, char *argv[]) {
 
     // Collect utilization statistics
     topology->CollectUtilizationStatistics();
+
+    topology->GetQueueLength();
 
     // Finalize the simulation
     basicSimulation->Finalize();

@@ -489,24 +489,55 @@ namespace ns3 {
                 fprintf(file_utilization_csv, "%f\n", delay.GetSeconds());
             }
            
-
-            for (size_t i = 0; i < m_islNetDevices.GetN(); i++) {
-                Ptr<PointToPointLaserNetDevice> dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
-                const std::vector<int> qlen = dev->GetQueueLen();
-                fprintf(file_utilization_csv, "dev num: %lu\n", i);
-                fprintf(file_utilization_csv, "queue sample times: %lu\n", qlen.size());
-                double sum = 0;
-                for (size_t i = 0; i < qlen.size(); i++) {
-                    //fprintf(file_utilization_csv, "queue len: %d\n", qlen[i]);
-                    sum += qlen[i];
-                }
-                fprintf(file_utilization_csv, "avg queue len: %f\n", (double)sum/(double)qlen.size());
-            }
             // Close CSV file
             fclose(file_utilization_csv);
 
         }
     }
+
+    void TopologySatelliteNetwork::QueueTracer(){
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/dev_queue_log.csv").c_str(), "a+");
+        long int now_ns = Simulator::Now().GetNanoSeconds();   
+        fprintf(file_delay_csv, "record delay at %ld\n", now_ns);
+        for (size_t i = 0; i < m_islNetDevices.GetN(); i++) {
+            Ptr<PointToPointLaserNetDevice> dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
+            if (traceQueueLenth.find(dev) == traceQueueLenth.end()){
+                int len = dev->GetQueue()->GetNPackets();
+                std::vector<std::pair<long int, int> > vec;
+                vec.push_back(std::make_pair(now_ns, len));
+                traceQueueLenth[dev] = vec;
+                fprintf(file_delay_csv, "dev %lu delay is %d\n", i, len);
+            } else {
+                int len = dev->GetQueue()->GetNPackets();
+                std::vector<std::pair<long int, int> > vec = traceQueueLenth[dev];
+                vec.push_back(std::make_pair(now_ns, len));
+                traceQueueLenth[dev] = vec;
+                fprintf(file_delay_csv, "dev %lu delay is %d\n", i, len);
+            }
+        }
+        fclose(file_delay_csv);
+        Simulator::Schedule (MilliSeconds (1000), &TopologySatelliteNetwork::QueueTracer, this);
+    }
+
+    void TopologySatelliteNetwork::CollectDeviceQueueLength() {
+        QueueTracer();
+    }
+
+    void TopologySatelliteNetwork::GetQueueLength(){
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/dev_queue_length.csv").c_str(), "w+");
+        for (size_t i = 0; i < m_islNetDevices.GetN(); i++) {
+            fprintf(file_delay_csv, "trace delay of dev: %lu\n", i);
+            Ptr<PointToPointLaserNetDevice> dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
+            std::vector<std::pair<long int, int> > vec = traceQueueLenth[dev];
+            for (size_t j = 0; j < vec.size(); j++){
+                fprintf(file_delay_csv, "queue delay at %ld is %d\n", vec[j].first, vec[j].second);
+            }
+        }
+        fclose(file_delay_csv);
+    }
+
+
+    
 
     uint32_t TopologySatelliteNetwork::GetNumSatellites() {
         return m_satelliteNodes.GetN();

@@ -83,9 +83,14 @@ namespace ns3 {
         uint32_t NodeToGroundStationId(uint32_t node_id);
         bool IsSatelliteId(uint32_t node_id);
         bool IsGroundStationId(uint32_t node_id);
+        void QueueTracer();
 
+        void CollectDeviceQueueLength();
+        void GetQueueLength();
         // Post-processing
         void CollectUtilizationStatistics();
+
+
 
     private:
 
@@ -123,7 +128,7 @@ namespace ns3 {
         // ISL devices
         NetDeviceContainer m_islNetDevices;
         std::vector<std::pair<int32_t, int32_t>> m_islFromTo;
-
+        std::map<Ptr<PointToPointLaserNetDevice>, std::vector<std::pair<long int, int> > > traceQueueLenth;
         // Values
         double m_isl_data_rate_megabit_per_s;
         double m_gsl_data_rate_megabit_per_s;

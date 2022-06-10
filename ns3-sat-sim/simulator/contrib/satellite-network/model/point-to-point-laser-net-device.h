@@ -479,14 +479,12 @@ private:
   int64_t m_busy_time_counter_ns;
   bool m_current_state_is_on;
   std::vector<double> m_utilization;
-  std::vector<int> m_queuelen;
+  //std::vector<int> m_queuelen;
   void TrackUtilization(bool next_state_is_on);
 
 public:
     void EnableUtilizationTracking(int64_t interval_ns);
-    const std::vector<double>& FinalizeUtilization();
-    const std::vector<int>& TraceQueueLength();
-    const std::vector<int>& GetQueueLen();
+    const std::vector<double>& FinalizeUtilization(); 
 
 };
 
