@@ -84,9 +84,13 @@ namespace ns3 {
         bool IsSatelliteId(uint32_t node_id);
         bool IsGroundStationId(uint32_t node_id);
         void QueueTracer();
-
         void CollectDeviceQueueLength();
         void GetQueueLength();
+
+        void ISLDelayTracer();
+        void CollectISLDelay();
+        void GetISLDelay();
+
         // Post-processing
         void CollectUtilizationStatistics();
 
@@ -128,7 +132,9 @@ namespace ns3 {
         // ISL devices
         NetDeviceContainer m_islNetDevices;
         std::vector<std::pair<int32_t, int32_t>> m_islFromTo;
-        std::map<Ptr<PointToPointLaserNetDevice>, std::vector<std::pair<long int, int> > > traceQueueLenth;
+        std::map<Ptr<PointToPointLaserNetDevice>, std::vector<std::pair<long int, int> > > traceQueueLength;  //key = dev; value= time, queuelength
+        std::map<std::pair<int, int>, std::vector<std::pair<long int, double> > > traceISLDelay; // key = src, dst; value= time, delay
+
         // Values
         double m_isl_data_rate_megabit_per_s;
         double m_gsl_data_rate_megabit_per_s;

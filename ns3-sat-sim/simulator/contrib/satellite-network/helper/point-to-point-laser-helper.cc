@@ -99,7 +99,7 @@ PointToPointLaserHelper::Install (Ptr<Node> a, Ptr<Node> b)
   double distance = aMobility->GetDistanceFrom (bMobility);
   double delay = distance / propagation_speed;
   SetChannelAttribute("Delay", StringValue(std::to_string(delay) + "s"));
-  std::cout<<"delay: "<<delay<<std::endl;
+  //std::cout<<"delay: "<<delay<<std::endl;
   NetDeviceContainer container;
 
   Ptr<PointToPointLaserNetDevice> devA = m_deviceFactory.Create<PointToPointLaserNetDevice> ();

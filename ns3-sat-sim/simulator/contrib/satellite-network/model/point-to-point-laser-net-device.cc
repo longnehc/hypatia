@@ -703,6 +703,7 @@ PointToPointLaserNetDevice::EnableUtilizationTracking(int64_t interval_ns) {
     m_busy_time_counter_ns = 0;
     m_current_state_is_on = false;
 }
+ 
 
 void
 PointToPointLaserNetDevice::TrackUtilization(bool next_state_is_on) {
