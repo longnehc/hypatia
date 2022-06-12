@@ -65,9 +65,9 @@ public:
   void Attach (Ptr<GSLNetDevice> device);
   virtual std::size_t GetNDevices (void) const;
   virtual Ptr<NetDevice> GetDevice (std::size_t i) const;
+  Time GetDelay (Ptr<MobilityModel> senderMobility, Ptr<MobilityModel> receiverMobility) const;
 
 protected:
-  Time GetDelay (Ptr<MobilityModel> senderMobility, Ptr<MobilityModel> receiverMobility) const;
 
   Time   m_lowerBoundDelay;                   //!< Propagation delay which is
                                               //   used to give a minimum lookahead time to the

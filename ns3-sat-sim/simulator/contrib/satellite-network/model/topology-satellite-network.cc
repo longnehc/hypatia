@@ -21,6 +21,7 @@
 
 #include "topology-satellite-network.h"
 #include "point-to-point-laser-channel.h"
+#include "gsl-channel.h"
 
 namespace ns3 {
 
@@ -412,7 +413,13 @@ namespace ns3 {
         }
         std::cout << "    >> Finished removing GSL queueing disciplines" << std::endl;
 
-
+        for (uint32_t i = 0; i < devices.GetN(); i++) {
+            if ((int)i < sat_gsl_dev_num) {
+                m_gslSatDevices.Add(devices.Get(i));
+            } else {
+                m_gslGroundDevices.Add(devices.Get(i));
+            }
+        }
 
         // Check that all interfaces were created
         NS_ABORT_MSG_IF(total_num_gsl_ifs != devices.GetN(), "Not the expected amount of interfaces has been created.");
@@ -506,46 +513,49 @@ namespace ns3 {
         }
     }
 
-    void TopologySatelliteNetwork::QueueTracer(){
-        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/dev_queue_log.csv").c_str(), "a+");
+    void TopologySatelliteNetwork::ISLDeviceQueueTracer(){
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/isl_dev_queue_log.csv").c_str(), "a+");
         long int now_ns = Simulator::Now().GetNanoSeconds();   
         fprintf(file_delay_csv, "record queue length at %ld\n", now_ns);
         for (size_t i = 0; i < m_islNetDevices.GetN(); i++) {
             Ptr<PointToPointLaserNetDevice> dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
             int len = dev->GetQueue()->GetNPackets();
-            if (traceQueueLength.find(dev) == traceQueueLength.end()){
+            if (traceISLDevQueueLength.find(dev) == traceISLDevQueueLength.end()){
                 std::vector<std::pair<long int, int> > vec;
                 vec.push_back(std::make_pair(now_ns, len));
-                traceQueueLength[dev] = vec;
+                traceISLDevQueueLength[dev] = vec;
                 fprintf(file_delay_csv, "dev %lu queue length is %d\n", i, len);
             } else {
-                std::vector<std::pair<long int, int> > vec = traceQueueLength[dev];
+                std::vector<std::pair<long int, int> > vec = traceISLDevQueueLength[dev];
                 vec.push_back(std::make_pair(now_ns, len));
-                traceQueueLength[dev] = vec;
+                traceISLDevQueueLength[dev] = vec;
                 fprintf(file_delay_csv, "dev %lu queue length is %d\n", i, len);
             }
         }
         fclose(file_delay_csv);
-        Simulator::Schedule (MilliSeconds (1000), &TopologySatelliteNetwork::QueueTracer, this);
+        Simulator::Schedule (MilliSeconds (1000), &TopologySatelliteNetwork::ISLDeviceQueueTracer, this);
     }
 
-    void TopologySatelliteNetwork::CollectDeviceQueueLength() {
-        QueueTracer();
+    void TopologySatelliteNetwork::CollectISLDeviceQueueLength() {
+        ISLDeviceQueueTracer();
     }
 
     
-    void TopologySatelliteNetwork::GetQueueLength(){
-        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/dev_queue_length.csv").c_str(), "w+");
+    void TopologySatelliteNetwork::GetISLDeviceQueueLength(){
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/isl_dev_queue_length.csv").c_str(), "w+");
         for (size_t i = 0; i < m_islNetDevices.GetN(); i++) {
             fprintf(file_delay_csv, "trace queue length of dev: %lu\n", i);
             Ptr<PointToPointLaserNetDevice> dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
-            std::vector<std::pair<long int, int> > vec = traceQueueLength[dev];
+            std::vector<std::pair<long int, int> > vec = traceISLDevQueueLength[dev];
             for (size_t j = 0; j < vec.size(); j++){
                 fprintf(file_delay_csv, "queue length at %ld is %d\n", vec[j].first, vec[j].second);
             }
         }
         fclose(file_delay_csv);
     }
+
+
+
 
     void TopologySatelliteNetwork::ISLDelayTracer() {
         FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/isl_delay_trace_log.csv").c_str(), "a+");
@@ -589,6 +599,113 @@ namespace ns3 {
         fclose(file_delay_csv);
     }
 
+    void TopologySatelliteNetwork::GSLDelayTracer() {
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/gsl_delay_trace_log.csv").c_str(), "a+");
+        long int now_ns = Simulator::Now().GetNanoSeconds();   
+        fprintf(file_delay_csv, "record GSL delay at %ld\n", now_ns);
+        for (size_t i = 0; i < m_gslSatDevices.GetN(); i++) {
+            for (size_t j = 0; j < m_gslGroundDevices.GetN(); j++) {
+                //fprintf(file_delay_csv, "sat gsl device num %u\n", m_gslSatDevices.GetN());
+                //fprintf(file_delay_csv, "ground gsl device num %u\n", m_gslGroundDevices.GetN());
+                Ptr<GSLNetDevice> src_dev = m_gslSatDevices.Get(i)->GetObject<GSLNetDevice>();
+                Ptr<GSLNetDevice> dst_dev = m_gslGroundDevices.Get(j)->GetObject<GSLNetDevice>();
+                Ptr<MobilityModel> senderMobility = src_dev->GetNode()->GetObject<MobilityModel>();
+                Ptr<MobilityModel> receiverMobility = dst_dev->GetNode()->GetObject<MobilityModel>();
+                Time delay = src_dev->GetChannel()->GetObject<GSLChannel>()->GetDelay(senderMobility, receiverMobility);
+                fprintf(file_delay_csv, "from sat %lu to ground station %lu, gsl delay is %f\n", i, j, delay.GetSeconds());
+                if (traceGSLDelay.find(std::make_pair(i, j)) == traceGSLDelay.end()){
+                    std::vector<std::pair<long int, double> > vec; 
+                    vec.push_back(std::make_pair(now_ns, delay.GetSeconds()));
+                    traceGSLDelay[std::make_pair(i, j)] =  vec;
+                } else {
+                    std::vector<std::pair<long int, double> > vec = traceGSLDelay[std::make_pair(i, j)];
+                    vec.push_back(std::make_pair(now_ns, delay.GetSeconds()));
+                    traceGSLDelay[std::make_pair(i, j)] =  vec;
+                }             
+            }
+        }
+        fclose(file_delay_csv);
+        Simulator::Schedule (MilliSeconds (1000), &TopologySatelliteNetwork::GSLDelayTracer, this);
+    }
+
+    void TopologySatelliteNetwork::CollectGSLDelay() {
+        GSLDelayTracer();
+    }
+
+    void TopologySatelliteNetwork::GetGSLDelay(){
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/gsl_delay.csv").c_str(), "w+");
+        for (size_t i = 0; i < m_gslSatDevices.GetN(); i++) {
+            for (size_t j = 0; j < m_gslGroundDevices.GetN(); j++) {
+                fprintf(file_delay_csv, "trace GSL delay from sat %lu to ground station %lu\n", i, j);
+                std::vector<std::pair<long int, double> > vec = traceGSLDelay[std::make_pair(i, j)];
+                for (size_t k = 0; k < vec.size(); k++){
+                    fprintf(file_delay_csv, "GSL delay at %ld is %f\n", vec[j].first, vec[j].second);
+                }            
+            }
+        }       
+        fclose(file_delay_csv);
+    }
+
+  void TopologySatelliteNetwork::GSLDeviceQueueTracer(){
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/gsl_dev_queue_log.csv").c_str(), "a+");
+        long int now_ns = Simulator::Now().GetNanoSeconds();  
+
+        fprintf(file_delay_csv, "record gsl device queue length at %ld\n", now_ns);
+        for (size_t i = 0; i < m_gslSatDevices.GetN() + m_gslGroundDevices.GetN(); i++) {
+            Ptr<GSLNetDevice> dev = 0;
+            if (i < m_gslSatDevices.GetN()) {
+                dev = m_gslSatDevices.Get(i)->GetObject<GSLNetDevice>();
+            } else {
+                dev = m_gslGroundDevices.Get(i - m_gslSatDevices.GetN())->GetObject<GSLNetDevice>();
+            }
+            int len = dev->GetQueue()->GetNPackets();
+            if (traceGSLDevQueueLength.find(dev) == traceGSLDevQueueLength.end()){
+                std::vector<std::pair<long int, int> > vec;
+                vec.push_back(std::make_pair(now_ns, len));
+                traceGSLDevQueueLength[dev] = vec;
+                if (i < m_gslSatDevices.GetN()) {
+                    fprintf(file_delay_csv, "sat dev %lu queue length is %d\n", i, len);
+                } else {
+                    fprintf(file_delay_csv, "ground station dev %lu queue length is %d\n", i, len);
+                }
+            } else {
+                std::vector<std::pair<long int, int> > vec = traceGSLDevQueueLength[dev];
+                vec.push_back(std::make_pair(now_ns, len));
+                traceGSLDevQueueLength[dev] = vec;
+                if (i < m_gslSatDevices.GetN()) {
+                    fprintf(file_delay_csv, "sat dev %lu queue length is %d\n", i, len);
+                } else {
+                    fprintf(file_delay_csv, "ground station dev %lu queue length is %d\n", i, len);
+                }
+            }
+        }
+        fclose(file_delay_csv);
+        Simulator::Schedule (MilliSeconds (1000), &TopologySatelliteNetwork::GSLDeviceQueueTracer, this);
+    }
+
+    void TopologySatelliteNetwork::CollectGSLDeviceQueueLength() {
+        GSLDeviceQueueTracer();
+    }
+
+    
+    void TopologySatelliteNetwork::GetGSLDeviceQueueLength(){
+        FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/gsl_dev_queue_length.csv").c_str(), "w+");
+        for (size_t i = 0; i < m_gslSatDevices.GetN() + m_gslGroundDevices.GetN(); i++) {
+            Ptr<GSLNetDevice> dev = 0;
+            if (i < m_gslSatDevices.GetN()) {
+                dev = m_gslSatDevices.Get(i)->GetObject<GSLNetDevice>();
+                fprintf(file_delay_csv, "trace queue length of gsl dev in sat %lu\n", i);
+            } else {
+                dev = m_gslGroundDevices.Get(i - m_gslSatDevices.GetN())->GetObject<GSLNetDevice>();
+                fprintf(file_delay_csv, "trace queue length of gsl dev in ground station %lu\n", i-m_gslSatDevices.GetN());
+            }
+            std::vector<std::pair<long int, int> > vec = traceGSLDevQueueLength[dev];
+            for (size_t j = 0; j < vec.size(); j++){
+                fprintf(file_delay_csv, "queue length at %ld is %d\n", vec[j].first, vec[j].second);
+            }
+        }
+        fclose(file_delay_csv);
+    }
     uint32_t TopologySatelliteNetwork::GetNumSatellites() {
         return m_satelliteNodes.GetN();
     }

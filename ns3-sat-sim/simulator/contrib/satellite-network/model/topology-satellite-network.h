@@ -83,13 +83,21 @@ namespace ns3 {
         uint32_t NodeToGroundStationId(uint32_t node_id);
         bool IsSatelliteId(uint32_t node_id);
         bool IsGroundStationId(uint32_t node_id);
-        void QueueTracer();
-        void CollectDeviceQueueLength();
-        void GetQueueLength();
+        void ISLDeviceQueueTracer();
+        void CollectISLDeviceQueueLength();
+        void GetISLDeviceQueueLength();
 
         void ISLDelayTracer();
         void CollectISLDelay();
         void GetISLDelay();
+
+        void GSLDeviceQueueTracer();
+        void CollectGSLDeviceQueueLength();
+        void GetGSLDeviceQueueLength();
+
+        void GSLDelayTracer();
+        void CollectGSLDelay();
+        void GetGSLDelay();
 
         // Post-processing
         void CollectUtilizationStatistics();
@@ -131,9 +139,15 @@ namespace ns3 {
 
         // ISL devices
         NetDeviceContainer m_islNetDevices;
+        NetDeviceContainer m_gslSatDevices;
+        NetDeviceContainer m_gslGroundDevices;
+
         std::vector<std::pair<int32_t, int32_t>> m_islFromTo;
-        std::map<Ptr<PointToPointLaserNetDevice>, std::vector<std::pair<long int, int> > > traceQueueLength;  //key = dev; value= time, queuelength
+        std::map<Ptr<PointToPointLaserNetDevice>, std::vector<std::pair<long int, int> > > traceISLDevQueueLength;  //key = dev; value= time, queuelength
+        std::map<Ptr<GSLNetDevice>, std::vector<std::pair<long int, int> > > traceGSLDevQueueLength;  //key = dev; value= time, queuelength
         std::map<std::pair<int, int>, std::vector<std::pair<long int, double> > > traceISLDelay; // key = src, dst; value= time, delay
+        std::map<std::pair<int, int>, std::vector<std::pair<long int, double> > > traceGSLDelay; // key = src, dst; value= time, delay
+
 
         // Values
         double m_isl_data_rate_megabit_per_s;
