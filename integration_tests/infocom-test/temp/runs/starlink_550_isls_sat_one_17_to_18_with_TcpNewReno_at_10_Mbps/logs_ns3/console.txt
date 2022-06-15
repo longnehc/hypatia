@@ -1,0 +1,165 @@
+Waf: Entering directory `/data01/home/chenlong.nirver/hypatia-master/ns3-sat-sim/simulator/build/debug_all'
+Waf: Leaving directory `/data01/home/chenlong.nirver/hypatia-master/ns3-sat-sim/simulator/build/debug_all'
+Build commands will be stored in build/debug_all/compile_commands.json
+'build' finished successfully (1.155s)
+BASIC SIMULATION START
+  > Date... Wednesday June 15, 2022
+  > Time... 22:01:42
+
+CONFIGURE RUN DIRECTORY
+  > Run directory: ../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps
+  > Logs directory: ../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps/logs_ns3
+
+CONFIGURATION
+-----
+KEY                                       VALUE
+dynamic_state_update_interval_ns          1000000000
+enable_isl_utilization_tracking           true
+enable_tcp_flow_scheduler                 true
+gsl_data_rate_megabit_per_s               10.0
+gsl_max_queue_size_pkts                   100
+isl_data_rate_megabit_per_s               10.0
+isl_max_queue_size_pkts                   100
+isl_utilization_tracking_interval_ns      1000000000
+satellite_network_dir                     ../../gen_data/starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls
+satellite_network_routes_dir              ../../gen_data/starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls/dynamic_state_1000ms_for_10s
+simulation_end_time_ns                    10000000000
+simulation_seed                           123456789
+tcp_flow_enable_logging_for_tcp_flow_ids  set(0,1,2)
+tcp_flow_schedule_filename                schedule.csv
+tcp_socket_type                           TcpNewReno
+
+CONFIGURE SIMULATION
+  > Distributed is not enabled
+  > System id........ 0
+  > No. of systems... 1
+  > Seed............. 123456789
+  > Duration......... 10.00 s (10000000000 ns)
+
+TCP OPTIMIZATION BASIC
+  > Clock granularity.......... 1 ns
+  > Initial CWND............... 10 packets
+  > Send buffer size........... 33.554 MB
+  > Receive buffer size........ 33.554 MB
+  > Segment size............... 1380 byte
+  > Timestamp option........... enabled
+  > SACK option................ enabled
+  > Window scaling option...... enabled
+  > Pacing..................... disabled
+
+SATELLITE NETWORK
+  > Number of satellites........ 1584
+  > Number of ground stations... 100
+  > Number of nodes............. 1684
+  > Installed Internet stacks
+  > Reading and creating ISLs
+    >> ISL data rate........ 10 Mbit/s
+    >> ISL max queue size... 100 packets
+    >> Created 3168 ISL(s)
+  > Creating GSLs
+    >> GSL data rate........ 10 Mbit/s
+    >> GSL max queue size... 100 packets
+    >> Read all GSL interfaces information for the 1684 nodes
+    >> Number of GSL interfaces in satellites... 1584
+    >> Number of GSL interfaces in ground stations... 100
+    >> Number of GSL interfaces to create... 1684
+    >> Finished install GSL interfaces (interfaces, network devices, one shared channel)
+    >> Finished installing traffic control layer qdisc which will be removed later
+    >> Assigning IP addresses...
+       (with many interfaces, this can take long due to an inefficient IP assignment conflict checker)
+       Progress (as there are more entries, it becomes slower):
+       - 10.04% (t = 0.06 s, update took 0.06 s)
+       - 20.07% (t = 0.13 s, update took 0.06 s)
+       - 30.11% (t = 0.19 s, update took 0.07 s)
+       - 40.14% (t = 0.26 s, update took 0.07 s)
+       - 50.18% (t = 0.34 s, update took 0.07 s)
+       - 60.21% (t = 0.41 s, update took 0.08 s)
+       - 70.25% (t = 0.49 s, update took 0.08 s)
+       - 80.29% (t = 0.57 s, update took 0.08 s)
+       - 90.32% (t = 0.66 s, update took 0.08 s)
+       - 100.00% (t = 0.74 s, update took 0.08 s)
+    >> Finished assigning IPs
+    >> Removing traffic control layers (qdiscs)...
+    >> Finished removing GSL queueing disciplines
+    >> GSL interfaces are setup
+  > Populating ARP caches
+
+SETUP SINGLE FORWARDING ROUTING
+  > Create initial single forwarding state
+  > Setting the routing arbiter on each node
+  > Forward state update interval: 1000000000ns
+  > Perform first forwarding state load for t=0
+
+SETUP GSL IF BANDWIDTH HELPER
+  > GSL interface bandwidth update interval: 1000000000ns
+  > Perform first GSL interface bandwidth setting for t=0
+
+TCP FLOW SCHEDULER
+  > TCP flow scheduler is enabled
+  > Read schedule (total flow start events: 3)
+  > Removed previous flow log files if present
+  > Setting up TCP flow sinks
+  > Setting up traffic TCP flow starter
+
+UDP BURST SCHEDULER
+  > Not enabled explicitly, so disabled
+
+PINGMESH SCHEDULER
+  > Not enabled explicitly, so disabled
+
+SIMULATION
+Running the simulation for 10.00 simulation seconds...
+25.30% - Simulation Time = 2.53 s ::: Wallclock Time = 12.06 s
+Estimated wallclock time remaining: 35 seconds
+46.51% - Simulation Time = 4.65 s ::: Wallclock Time = 22.12 s
+Estimated wallclock time remaining: 25 seconds
+66.99% - Simulation Time = 6.70 s ::: Wallclock Time = 32.94 s
+Estimated wallclock time remaining: 16 seconds
+86.86% - Simulation Time = 8.69 s ::: Wallclock Time = 44.23 s
+Estimated wallclock time remaining: 6 seconds
+Finished simulation.
+Simulation of 10.0 seconds took in wallclock time 51.3 seconds.
+
+STORE TCP FLOW RESULTS
+  > Opening TCP flow log files:
+    >> Opened: ../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps/logs_ns3/tcp_flows.csv
+    >> Opened: ../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps/logs_ns3/tcp_flows.txt
+  > Writing tcp_flows.txt header
+  > Writing log files line-by-line
+  > Total TCP flow log entries to write... 3
+  > Closing TCP flow log files:
+    >> Closed: ../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps/logs_ns3/tcp_flows.csv
+    >> Closed: ../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps/logs_ns3/tcp_flows.txt
+  > TCP flow log files have been written
+
+STORE UDP BURST RESULTS
+  > Not enabled, so no UDP burst results are written
+
+STORE PINGMESH RESULTS
+  > Not enabled, so no pingmesh results are written
+
+CLEAN-UP
+  > Simulator is destroyed
+
+TIMING RESULTS
+------
+[    0.0 -     0.0] (0.0 s) :: Configure run and logs directory
+[    0.0 -     0.0] (0.0 s) :: Configure simulator
+[    0.0 -     0.0] (0.0 s) :: Setup TCP parameters
+[    0.0 -     5.5] (5.5 s) :: Create initial single forwarding state
+[    5.5 -    22.0] (16.5 s) :: Setup routing arbiter on each node
+[   22.0 -    23.0] (0.9 s) :: Create initial single forwarding state
+[   23.0 -    23.0] (0.0 s) :: Set first GSL interface bandwidth
+[   23.0 -    23.0] (0.0 s) :: Read flow schedule
+[   23.0 -    23.0] (0.0 s) :: Remove previous flow log files
+[   23.0 -    23.0] (0.0 s) :: Setup TCP flow sinks
+[   23.0 -    23.0] (0.0 s) :: Setup traffic TCP flow starter
+[   23.0 -    28.9] (5.9 s) :: Whatever is between previous timestamp and the simulation run
+[   28.9 -    80.2] (51.3 s) :: Run simulation
+[   80.2 -    80.2] (0.0 s) :: Write TCP flow log files
+[   80.2 -    81.1] (0.9 s) :: Destroy simulator
+
+BASIC SIMULATION END
+  > Date... Wednesday June 15, 2022
+  > Time... 22:03:03
+
