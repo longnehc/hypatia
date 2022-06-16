@@ -1,3 +1,4 @@
+import argparse
 import exputil
 import networkload
 import random
@@ -10,7 +11,12 @@ SEED_FROM_TO = random.randint(0, 100000000)
 SEED_FLOW_SIZE = random.randint(0, 100000000)
 
 
-def generate_tcp_schedule(start_id, end_id):
+def generate_tcp_schedule(
+        start_id, 
+        end_id,
+        duration_seconds,
+        expected_flows_per_s,
+    ):
     """
     https://github.com/snkas/networkload/blob/master/example/example.py
     """
@@ -18,8 +24,7 @@ def generate_tcp_schedule(start_id, end_id):
     servers = set(range(start_id, end_id))
 
     # Traffic start time in ns
-    duration_ns = seconds_in_ns(10)
-    expected_flows_per_s = 100
+    duration_ns = seconds_in_ns(duration_seconds)
     list_start_time_ns = networkload.draw_poisson_inter_arrival_gap_start_times_ns(duration_ns, expected_flows_per_s, SEED_START_TIMES)
     num_starts = len(list_start_time_ns)
 
@@ -46,4 +51,16 @@ def seconds_in_ns(seconds):
 
 
 if __name__ == '__main__':
-    generate_tcp_schedule(100, 200)
+    parser = argparse.ArgumentParser(description='Generate a TCP flow schedule csv file.')
+    parser.add_argument('--start_id', action="store", dest="start_id", type=int)
+    parser.add_argument('--end_id', action="store", dest="end_id", type=int)
+    parser.add_argument('--duration_s', action="store", dest="duration_s", default=10, type=int)
+    parser.add_argument('--expected_flows_per_s', action="store", dest="expected_flows_per_s", default=100, type=int)
+    args = parser.parse_args()
+
+    generate_tcp_schedule(
+        args.start_id,
+        args.end_id,
+        args.duration_s,
+        args.expected_flows_per_s,
+    )
