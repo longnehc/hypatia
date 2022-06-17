@@ -21,7 +21,7 @@ def generate_tcp_schedule(
     https://github.com/snkas/networkload/blob/master/example/example.py
     """
     # A set of server IDs
-    servers = set(range(start_id, end_id))
+    servers = set(range(start_id, end_id + 1))
 
     # Traffic start time in ns
     duration_ns = seconds_in_ns(duration_seconds)
