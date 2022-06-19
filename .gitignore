@@ -6,3 +6,4 @@ gen_data/
 data/
 temp/
 runs/
+*.txt
