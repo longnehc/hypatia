@@ -1,3 +1,6 @@
 temp_data/
+gen_data/
+data/
+temp/
 hypatia_paper_temp_data.tar.gz
 clean.sh

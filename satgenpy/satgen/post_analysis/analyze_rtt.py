@@ -116,6 +116,8 @@ def analyze_rtt(
         # Show progress a bit
         print("%d / %d" % (it, num_iterations))
         it += 1
+    lengthofrtt = len(rtt_list_per_pair) * len(rtt_list_per_pair[0])
+    print("length of rtt list: %d" % lengthofrtt)
     print("")
 
     #################################################

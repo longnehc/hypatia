@@ -80,4 +80,102 @@ for run in get_tcp_run_list():
 
 
 # Print finish
-print("Success: generated ns-3 runs")
+print("Success: generated ns-3 tcp runs")
+
+# Ping runs
+for run in get_pings_run_list():
+
+    # Prepare run directory
+    run_dir = "temp/runs/" + run["name"]
+    local_shell.remove_force_recursive(run_dir)
+    local_shell.make_full_dir(run_dir)
+
+    # config_ns3.properties
+    local_shell.copy_file("templates/template_pings_a_b_config_ns3.properties", run_dir + "/config_ns3.properties")
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[SATELLITE-NETWORK]", str(run["satellite_network"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[DYNAMIC-STATE]", str(run["dynamic_state"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[DYNAMIC-STATE-UPDATE-INTERVAL-NS]", str(run["dynamic_state_update_interval_ns"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[SIMULATION-END-TIME-NS]", str(run["simulation_end_time_ns"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[ISL-DATA-RATE-MEGABIT-PER-S]", str(run["data_rate_megabit_per_s"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[GSL-DATA-RATE-MEGABIT-PER-S]", str(run["data_rate_megabit_per_s"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[ISL-MAX-QUEUE-SIZE-PKTS]", str(run["queue_size_pkt"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[GSL-MAX-QUEUE-SIZE-PKTS]", str(run["queue_size_pkt"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[ENABLE-ISL-UTILIZATION-TRACKING]", "true" if run["enable_isl_utilization_tracking"] else "false")
+    if run["enable_isl_utilization_tracking"]:
+        local_shell.sed_replace_in_file_plain(
+            run_dir + "/config_ns3.properties",
+            "[ISL-UTILIZATION-TRACKING-INTERVAL-NS-COMPLETE]",
+            "isl_utilization_tracking_interval_ns=" + str(run["isl_utilization_tracking_interval_ns"])
+        )
+    else:
+        local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                              "[ISL-UTILIZATION-TRACKING-INTERVAL-NS-COMPLETE]", "")
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[PINGMESH-INTERVAL-NS]", str(run["pingmesh_interval_ns"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[FROM]", str(run["from_id"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[TO]", str(run["to_id"]))
+
+# Print finish
+print("Success: generated ns-3 ping runs")
+
+
+# Udp runs
+for run in get_udp_run_list():
+    # Prepare run directory
+    run_dir = "temp/runs/" + run["name"]
+    local_shell.remove_force_recursive(run_dir)
+    local_shell.make_full_dir(run_dir)
+
+    # config_ns3.properties
+    local_shell.copy_file("templates/template_config_ns3_udp.properties", run_dir + "/config_ns3.properties")
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[SATELLITE-NETWORK]", str(run["satellite_network"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[DYNAMIC-STATE]", str(run["dynamic_state"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[DYNAMIC-STATE-UPDATE-INTERVAL-NS]", str(run["dynamic_state_update_interval_ns"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[SIMULATION-END-TIME-NS]", str(run["simulation_end_time_ns"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[ISL-DATA-RATE-MEGABIT-PER-S]", str(run["data_rate_megabit_per_s"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[GSL-DATA-RATE-MEGABIT-PER-S]", str(run["data_rate_megabit_per_s"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[ISL-MAX-QUEUE-SIZE-PKTS]", str(run["queue_size_isl_pkt"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[GSL-MAX-QUEUE-SIZE-PKTS]", str(run["queue_size_gsl_pkt"]))
+    local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                          "[ENABLE-ISL-UTILIZATION-TRACKING]", "true" if run["enable_isl_utilization_tracking"] else "false")
+    if run["enable_isl_utilization_tracking"]:
+        local_shell.sed_replace_in_file_plain(
+            run_dir + "/config_ns3.properties",
+            "[ISL-UTILIZATION-TRACKING-INTERVAL-NS-COMPLETE]",
+            "isl_utilization_tracking_interval_ns=" + str(run["isl_utilization_tracking_interval_ns"])
+        )
+    else:
+        local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
+                                              "[ISL-UTILIZATION-TRACKING-INTERVAL-NS-COMPLETE]", "")
+
+    with open(run_dir + "/udp_burst_schedule.csv", "w+") as f_out:
+        f_out.write("%d,%d,%d,%.10f,%d,%d,,\n" % (
+                            0,
+                            run["from_id"],  #src
+                            run["to_id"],  #dst
+                            run["data_rate_megabit_per_s"],
+                            0,
+                            1000000000000
+                        ))
+
+# Print finish
+print("Success: generated ns-3 udp runs")

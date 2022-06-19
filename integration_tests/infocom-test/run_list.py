@@ -21,8 +21,9 @@
 # SOFTWARE.
 
 # Core values
-dynamic_state_update_interval_ms = 1000                          # 100 millisecond update interval
-simulation_end_time_s = 10                                     # 200 seconds
+dynamic_state_update_interval_ms = 1000                         # 100 millisecond update interval
+simulation_end_time_s = 10                                      # 200 seconds
+pingmesh_interval_ns = 1 * 1000 * 1000                          # A ping every 1ms
 enable_isl_utilization_tracking = True                          # Enable utilization tracking
 isl_utilization_tracking_interval_ns = 1 * 1000 * 1000 * 1000   # 1 second utilization intervals
 
@@ -35,7 +36,7 @@ dynamic_state = "dynamic_state_" + str(dynamic_state_update_interval_ms) + "ms_f
 # > Manila (17) to Dalian (18)
 full_satellite_network_isls = "starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls" 
 chosen_pairs = [
-    ("starlink_550_isls_sat_one", 17, 18, "TcpNewReno", full_satellite_network_isls), 
+    ("starlink_550_isls_sat_one", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
 ]
 
 
@@ -44,7 +45,7 @@ def get_tcp_run_list():
     for p in chosen_pairs:
         run_list += [
             {
-                "name": p[0] + "_" + str(p[1]) + "_to_" + str(p[2]) + "_with_" + p[3] + "_at_10_Mbps",
+                "name": p[0] + "_" + str(p[1]) + "_to_" + str(p[2]) + "_tcp",
                 "satellite_network": p[4],
                 "dynamic_state": dynamic_state,
                 "dynamic_state_update_interval_ns": dynamic_state_update_interval_ns,
@@ -58,4 +59,49 @@ def get_tcp_run_list():
                 "tcp_socket_type": p[3],
             },
         ]
+    return run_list
+
+def get_pings_run_list():
+    run_list = []
+    for p in chosen_pairs:
+        run_list += [
+            {
+                "name": p[0] + "_" + str(p[1]) + "_to_" + str(p[2]) + "_pings",
+                "satellite_network": p[4],
+                "dynamic_state": dynamic_state,
+                "dynamic_state_update_interval_ns": dynamic_state_update_interval_ns,
+                "simulation_end_time_ns": simulation_end_time_ns,
+                "data_rate_megabit_per_s": 10000.0,
+                "queue_size_pkt": 100000, 
+                "enable_isl_utilization_tracking": enable_isl_utilization_tracking,
+                "isl_utilization_tracking_interval_ns": isl_utilization_tracking_interval_ns,
+                "from_id": p[1],
+                "to_id": p[2],
+                "pingmesh_interval_ns": pingmesh_interval_ns,
+            }
+        ]
+
+    return run_list
+
+def get_udp_run_list():
+    run_list = []
+    for p in chosen_pairs:
+        run_list += [
+            {
+                "name": p[0] + "_" + str(p[1]) + "_to_" + str(p[2]) + "_udp",
+                "satellite_network": p[4],
+                "dynamic_state": dynamic_state,
+                "dynamic_state_update_interval_ns": dynamic_state_update_interval_ns,
+                "simulation_end_time_ns": simulation_end_time_ns,
+                "data_rate_megabit_per_s": 1.0, 
+                "queue_size_isl_pkt":10,
+                "queue_size_gsl_pkt":10,
+                "enable_isl_utilization_tracking": enable_isl_utilization_tracking,
+                "isl_utilization_tracking_interval_ns": isl_utilization_tracking_interval_ns,
+                "from_id": p[1],
+                "to_id": p[2],
+                "pingmesh_interval_ns": pingmesh_interval_ns,
+            }
+        ]
+
     return run_list

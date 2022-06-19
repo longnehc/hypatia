@@ -639,7 +639,7 @@ namespace ns3 {
                 fprintf(file_delay_csv, "trace GSL delay from sat %lu to ground station %lu\n", i, j);
                 std::vector<std::pair<long int, double> > vec = traceGSLDelay[std::make_pair(i, j)];
                 for (size_t k = 0; k < vec.size(); k++){
-                    fprintf(file_delay_csv, "GSL delay at %ld is %f\n", vec[j].first, vec[j].second);
+                    fprintf(file_delay_csv, "GSL delay at %ld is %f\n", vec[k].first, vec[k].second);
                 }            
             }
         }       

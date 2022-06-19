@@ -1,3 +1,8 @@
 .idea
 *.pyc
 dev_testing/
+temp_data/
+gen_data/
+data/
+temp/
+runs/
