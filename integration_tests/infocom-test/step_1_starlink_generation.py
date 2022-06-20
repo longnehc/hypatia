@@ -89,7 +89,7 @@ def main():
         exit(1)
     else:
         main_helper.calculate(
-            "/temp/gen_data",
+            "temp/gen_data",
             int(args[0]),
             int(args[1]),
             args[2],
