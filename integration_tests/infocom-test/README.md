@@ -16,14 +16,15 @@ Expected outputs:
 
 Flow generation in step 2:
     TCP:
-        step 2.1: generate tcp flows：
+        step 2.1: generate TCP flows：
         python generate_tcp_schedule.py --start_id 1000 --end_id 1200 --duration_s 120 --expected_flows_per_s 100
 
     PING:
         TODO
 
     UDP:
-        TODO
+        step 2.3: generate UDP flows
+        python generate_udp_schedule.py --start_id 1584 --end_id 1682 --duration_s 10 --expected_flows_per_s 10 --burst_duration_s 3 --target_rate_mbps 1
   
 
 step3: run
