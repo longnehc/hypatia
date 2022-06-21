@@ -1,6 +1,5 @@
 from sgp4.api import Satrec
 import math
-import pdb
 
 
 # The radius of Earth in km
@@ -57,5 +56,3 @@ if __name__ == '__main__':
 
             satellite = parse_tle(name, tle1, tle2)
             classify_satellite(satellite_groups, satellite)
-
-    pdb.set_trace()
