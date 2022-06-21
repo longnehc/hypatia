@@ -1,6 +1,20 @@
 from parse_tle import *
-import matplotlib.pyplot as plt
-import numpy as np
+import math
+
+
+def classify_satellite_by_alt_inc_raan(satellite_groups, satellite):
+    altitude_km = math.ceil(satellite['altitude_km'])
+    inclination_deg =  math.ceil(satellite['inclination_deg'])
+    raan_deg =  math.ceil(satellite['raan_deg'])
+
+    if altitude_km not in satellite_groups:
+        satellite_groups[altitude_km] = dict()
+    if inclination_deg not in satellite_groups[altitude_km]:
+        satellite_groups[altitude_km][inclination_deg] = dict()
+    if raan_deg not in satellite_groups[altitude_km][inclination_deg]:
+        satellite_groups[altitude_km][inclination_deg][raan_deg] = []
+
+    satellite_groups[altitude_km][inclination_deg][raan_deg].append(satellite)
 
 
 def get_orbit_reports(satellite_groups):
@@ -65,7 +79,6 @@ def group_sats_in_same_bin_by_orbits(satellite_groups, alts_in_range):
                     'satellites': new_groups[inc][raan],
                 }
             )
-    #
     return orbits
 
 
@@ -104,20 +117,23 @@ def sort_dict_keys(keys):
     return l
 
 
+def is_end_of_file(name):
+    """
+    If the file ends properly, the last read of name should be empty.
+    """
+    return len(name) == 0
+
+
 if __name__ == '__main__':
-    filepath = 'starlink_tles/starlink_sullplemental_tles.txt'
+    filepath = 'starlink_sullplemental_tles.txt'
     satellite_groups = dict()  # Key: [altitude_km][inclination_deg][raan_deg]
-    
     with open(filepath, 'r') as f:
         while True:
             name = f.readline()
             tle1 = f.readline()
             tle2 = f.readline()
-
             if is_end_of_file(name):
                 break
-
             satellite = parse_tle(name, tle1, tle2)
-            classify_satellite(satellite_groups, satellite)
-    
+            classify_satellite_by_alt_inc_raan(satellite_groups, satellite)
     get_orbit_reports(satellite_groups)
