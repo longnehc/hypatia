@@ -80,3 +80,24 @@ satgen based rtt/path analysis:
 
         ~/hypatia-master/satgenpy$ 
         python -m satgen.post_analysis.main_analyze_time_step_path ../paper/satgenpy_analysis/data ../paper/satellite_networks_state/gen_data/starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls 1000 10 > ../paper/satgenpy_analysis/data/command_logs/constellation_comp_time_step_path_starlink_1000ms_for_10s.log 2>&1
+
+# Two-Line Element (TLE) Analysis
+
+To generate a TLE analysis report, run:
+
+```shell
+python create_tle_reports.py
+```
+
+## Useful Online Resources for TLEs
+
+### Online TLE Parser
+https://sat-tle-parser.netlify.app/
+
+This is an online TLE parser where you can paste the TLE directly to retrieve the information.
+
+### Starlink Satellite List
+
+https://orbit.ing-now.com/satellite/74171/2022-062ba/starlink-4171/
+
+You can look up a Starlink satellite by name on this website, which shows the basic orbital information about the satellite, and an animation of the orbit on the map. 
