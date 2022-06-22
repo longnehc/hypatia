@@ -13,7 +13,7 @@ def parse_tle(name, tle1, tle2):
 
     # Retrieve satellite information
     satellite['altitude_km'] = satrec.altp * R  # Use altitude of the perigee
-    satellite['inclination_deg'] = math.degrees(satrec.im)
-    satellite['raan_deg'] = math.degrees(satrec.Om)
+    satellite['inclination_deg'] = math.degrees(satrec.inclo)
+    satellite['raan_deg'] = math.degrees(satrec.nodeo)
 
     return satellite
