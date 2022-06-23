@@ -111,6 +111,18 @@ def write_alt_reports(groups_by_alt):
                 orbit_index += 1
 
 
+def write_satellite_epoch(satellites):
+    """
+    Write satellite names and epoch to a file.
+    """
+    with open('satellite_epoch.txt', 'w') as f:
+        for sat in satellites:
+            f.write(sat['name'] + '\n')
+            f.write('Year: {}\n'.format(sat['epoch_year']))
+            f.write('Days: {}\n'.format(sat['epoch_days']))
+            f.write('\n')
+
+
 def sort_dict_keys(keys):
     l = list(keys)
     l.sort()
@@ -127,6 +139,7 @@ def is_end_of_file(name):
 if __name__ == '__main__':
     filepath = 'starlink_sullplemental_tles.txt'
     satellite_groups = dict()  # Key: [altitude_km][inclination_deg][raan_deg]
+    satellites = []
     with open(filepath, 'r') as f:
         while True:
             name = f.readline()
@@ -135,5 +148,7 @@ if __name__ == '__main__':
             if is_end_of_file(name):
                 break
             satellite = parse_tle(name, tle1, tle2)
+            satellites.append(satellite)
             classify_satellite_by_alt_inc_raan(satellite_groups, satellite)
+    write_satellite_epoch(satellites)
     get_orbit_reports(satellite_groups)
