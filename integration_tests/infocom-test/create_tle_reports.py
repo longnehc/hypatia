@@ -92,6 +92,41 @@ def get_sats_on_alt(satellite_groups, alt):
     return sats
 
 
+def find_max_min_epoch(satellites):
+    min_epoch = {
+        'year': float('inf'),
+        'days': float('inf'),
+    }
+    max_epoch = {
+        'year': -float('inf'),
+        'days': -float('inf'),
+    }
+    for satellite in satellites:
+        satellite_epoch = {
+            'year': satellite['epoch_year'],
+            'days': satellite['epoch_days'],
+        }
+        if is_epoch_larger(satellite_epoch, max_epoch):
+            max_epoch = satellite_epoch
+        if is_epoch_smaller(satellite_epoch, min_epoch):
+            min_epoch = satellite_epoch
+    return max_epoch, min_epoch
+
+
+def is_epoch_larger(ep1, ep2):
+    if ep1['year'] >= ep2['year'] and ep1['days'] > ep2['days']:
+        return True
+    else:
+        return False
+
+
+def is_epoch_smaller(ep1, ep2):
+    if ep1['year'] <= ep2['year'] and ep1['days'] < ep2['days']:
+        return True
+    else:
+        return False
+
+
 def write_alt_reports(groups_by_alt):
     with open('tle_reports.txt', 'w') as report:
         report.write('SATELLITES BY ALTITUDES (KM)\n')
@@ -111,11 +146,20 @@ def write_alt_reports(groups_by_alt):
                 orbit_index += 1
 
 
-def write_satellite_epoch(satellites):
+def write_satellite_epoch(satellites, max_epoch, min_epoch):
     """
     Write satellite names and epoch to a file.
     """
+    max_day_frac, _ = math.modf(max_epoch['days'])
+    min_day_frac, _ = math.modf(min_epoch['days'])
     with open('satellite_epoch.txt', 'w') as f:
+        f.write('The maximum epoch is year {}, {} days.\n'.format(max_epoch['year'], max_epoch['days']))
+        f.write('The minimum epoch is year {}, {} days.\n'.format(min_epoch['year'], min_epoch['days']))
+        f.write('The epoch difference is {} years, {} days, {} hours\n\n'.format(
+            max_epoch['year'] - min_epoch['year'],
+            int(max_epoch['days']) - int(min_epoch['days']),
+            (max_day_frac - min_day_frac) * 24.0,
+        ))
         for sat in satellites:
             f.write(sat['name'] + '\n')
             f.write('Year: {}\n'.format(sat['epoch_year']))
@@ -150,5 +194,6 @@ if __name__ == '__main__':
             satellite = parse_tle(name, tle1, tle2)
             satellites.append(satellite)
             classify_satellite_by_alt_inc_raan(satellite_groups, satellite)
-    write_satellite_epoch(satellites)
+    max_epoch, min_epoch = find_max_min_epoch(satellites)
+    write_satellite_epoch(satellites, max_epoch, min_epoch)
     get_orbit_reports(satellite_groups)
