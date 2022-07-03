@@ -587,7 +587,7 @@ namespace ns3 {
 
     void TopologySatelliteNetwork::GetISLDelay(){
         FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/isl_delay.csv").c_str(), "w+");
-        for (size_t i = 0; i < m_islNetDevices.GetN() - 1; i += 2) {
+        for (int i = 0; i < (int) m_islNetDevices.GetN() - 1; i += 2) {
             std::pair<int32_t, int32_t> src_dst = m_islFromTo[i];
             fprintf(file_delay_csv, "trace ISL delay from %d to %d\n", src_dst.first, src_dst.second);
             std::vector<std::pair<long int, double> > vec = traceISLDelay[std::make_pair(src_dst.first, src_dst.second)];
