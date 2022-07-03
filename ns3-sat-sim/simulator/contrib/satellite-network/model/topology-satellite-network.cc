@@ -290,7 +290,6 @@ namespace ns3 {
             if (m_enable_isl_utilization_tracking) {
                 netDevices.Get(0)->GetObject<PointToPointLaserNetDevice>()->EnableUtilizationTracking(m_isl_utilization_tracking_interval_ns);
                 netDevices.Get(1)->GetObject<PointToPointLaserNetDevice>()->EnableUtilizationTracking(m_isl_utilization_tracking_interval_ns);
-
                 m_islNetDevices.Add(netDevices.Get(0));
                 m_islFromTo.push_back(std::make_pair(sat0_id, sat1_id));
                 m_islNetDevices.Add(netDevices.Get(1));
@@ -561,7 +560,7 @@ namespace ns3 {
         FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/isl_delay_trace_log.csv").c_str(), "a+");
         long int now_ns = Simulator::Now().GetNanoSeconds();   
         fprintf(file_delay_csv, "record ISL delay at %ld\n", now_ns);
-        for (size_t i = 0; i < m_islNetDevices.GetN() - 1; i += 2) {
+        for (int i = 0; i < (int) m_islNetDevices.GetN() - 1; i += 2) {
             Ptr<PointToPointLaserNetDevice> dev = m_islNetDevices.Get(i)->GetObject<PointToPointLaserNetDevice>();
             Ptr<MobilityModel> senderMobility = dev->GetNode()->GetObject<MobilityModel>();
             Ptr<MobilityModel> receiverMobility = dev->GetDestinationNode()->GetObject<MobilityModel>();
