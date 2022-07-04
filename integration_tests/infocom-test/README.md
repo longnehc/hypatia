@@ -1,4 +1,9 @@
 step 1: generate topology：
+simulation start time:
+    In step_1_starlink_generation.py, specify the simulation start time in the variable SIM_START_TIME.
+    Example of simulation start time: '2000-01-01 00:00:00.000'
+    If you want to use Hypatia's default (use epoch as the simulation start time), assign None to SIM_START_TIME.
+
 with isl:
     python step_1_starlink_generation.py 200 1000 isls_plus_grid ground_stations_top_100 algorithm_free_one_only_over_isls ${num_threads}
 
