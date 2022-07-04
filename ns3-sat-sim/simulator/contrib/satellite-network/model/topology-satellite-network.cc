@@ -646,11 +646,22 @@ namespace ns3 {
         FILE* file_delay_csv = fopen((m_basicSimulation->GetLogsDir() + "/gsl_delay.csv").c_str(), "w+");
         for (size_t i = 0; i < m_gslSatDevices.GetN(); i++) {
             for (size_t j = 0; j < m_gslGroundDevices.GetN(); j++) {
+                std::vector<std::pair<long int, double> > vec = traceGSLDelay[std::make_pair(i, j)];
+                /*
                 fprintf(file_delay_csv, "trace GSL delay from sat %lu to ground station %lu\n", i, j);
                 std::vector<std::pair<long int, double> > vec = traceGSLDelay[std::make_pair(i, j)];
                 for (size_t k = 0; k < vec.size(); k++){
                     fprintf(file_delay_csv, "GSL delay at %ld is %f\n", vec[k].first, vec[k].second);
                 }            
+                */
+                fprintf(file_delay_csv, "%lu,%lu,", i, j+m_gslSatDevices.GetN());
+                for (size_t k = 0; k < vec.size(); k++){
+                    fprintf(file_delay_csv, "%f", vec[k].second);
+                    if (k != vec.size() - 1) {
+                        fprintf(file_delay_csv, ",");
+                    }
+                }  
+                fprintf(file_delay_csv, "\n");
             }
         }       
         fclose(file_delay_csv);
@@ -704,15 +715,22 @@ namespace ns3 {
             Ptr<GSLNetDevice> dev = 0;
             if (i < m_gslSatDevices.GetN()) {
                 dev = m_gslSatDevices.Get(i)->GetObject<GSLNetDevice>();
-                fprintf(file_delay_csv, "trace queue length of gsl dev in sat %lu\n", i);
+                //fprintf(file_delay_csv, "trace queue length of gsl dev in sat %lu\n", i);
             } else {
                 dev = m_gslGroundDevices.Get(i - m_gslSatDevices.GetN())->GetObject<GSLNetDevice>();
-                fprintf(file_delay_csv, "trace queue length of gsl dev in ground station %lu\n", i-m_gslSatDevices.GetN());
+                //fprintf(file_delay_csv, "trace queue length of gsl dev in ground station %lu\n", i-m_gslSatDevices.GetN());
             }
             std::vector<std::pair<long int, int> > vec = traceGSLDevQueueLength[dev];
+            fprintf(file_delay_csv, "%lu,", i);
             for (size_t j = 0; j < vec.size(); j++){
-                fprintf(file_delay_csv, "queue length at %ld is %d\n", vec[j].first, vec[j].second);
+                //fprintf(file_delay_csv, "queue length at %ld is %d\n", vec[j].first, vec[j].second);
+                fprintf(file_delay_csv, "%d", vec[j].second);
+                if (j != vec.size() - 1){
+                    fprintf(file_delay_csv, ",");
+                }
             }
+            fprintf(file_delay_csv, "\n");
+
         }
         fclose(file_delay_csv);
     }

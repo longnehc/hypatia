@@ -4,6 +4,7 @@ with isl:
 
 bent-pipe:
     python step_1_starlink_generation.py 200 1000 isls_none ground_stations_paris_moscow_grid algorithm_free_one_only_gs_relays ${num_threads}
+    python step_1_starlink_generation.py 5 1000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
 
 
 step 2: generate conig_ns3.properties

@@ -114,14 +114,22 @@ TcpFlowScheduler::TcpFlowScheduler(Ptr<BasicSimulation> basicSimulation, Ptr<Top
                     m_basicSimulation->GetLogsDir() + "/system_" + std::to_string(m_system_id) + "_tcp_flows.csv";
             m_flows_txt_filename =
                     m_basicSimulation->GetLogsDir() + "/system_" + std::to_string(m_system_id) + "_tcp_flows.txt";
+            m_traffic_csv_filename = 
+                    m_basicSimulation->GetLogsDir() + "/system_" + std::to_string(m_system_id) + "/traffic.csv";
+            m_tcp_results_filename = 
+                    m_basicSimulation->GetLogsDir() + "/system_" + std::to_string(m_system_id) + "/tcp-results.csv";    
         } else {
             m_flows_csv_filename = m_basicSimulation->GetLogsDir() + "/tcp_flows.csv";
             m_flows_txt_filename = m_basicSimulation->GetLogsDir() + "/tcp_flows.txt";
+            m_traffic_csv_filename = m_basicSimulation->GetLogsDir() + "/traffic.csv";
+            m_tcp_results_filename = m_basicSimulation->GetLogsDir() + "/tcp-results.csv";
         }
 
         // Remove files if they are there
         remove_file_if_exists(m_flows_csv_filename);
         remove_file_if_exists(m_flows_txt_filename);
+        remove_file_if_exists(m_traffic_csv_filename);
+        remove_file_if_exists(m_tcp_results_filename);
         printf("  > Removed previous flow log files if present\n");
         m_basicSimulation->RegisterTimestamp("Remove previous flow log files");
 
@@ -163,6 +171,10 @@ void TcpFlowScheduler::WriteResults() {
         std::cout << "    >> Opened: " << m_flows_csv_filename << std::endl;
         FILE* file_txt = fopen(m_flows_txt_filename.c_str(), "w+");
         std::cout << "    >> Opened: " << m_flows_txt_filename << std::endl;
+        FILE* traffic_csv = fopen(m_traffic_csv_filename.c_str(), "w+");
+        std::cout << "    >> Opened: " << m_traffic_csv_filename << std::endl;
+        FILE* tcp_result_csv = fopen(m_tcp_results_filename.c_str(), "w+");
+        std::cout << "    >> Opened: " << tcp_result_csv << std::endl;
 
         // Header
         std::cout << "  > Writing tcp_flows.txt header" << std::endl;
@@ -215,6 +227,10 @@ void TcpFlowScheduler::WriteResults() {
                     entry.GetTcpFlowId(), entry.GetFromNodeId(), entry.GetToNodeId(), entry.GetSizeByte(), entry.GetStartTimeNs(),
                     entry.GetStartTimeNs() + fct_ns, fct_ns, sent_byte, finished_state.c_str(), entry.GetMetadata().c_str()
             );
+            fprintf(
+                    traffic_csv, "%" PRId64 ",%" PRId64 ",%" PRId64 ",%" PRId64  "\n",
+                    entry.GetFromNodeId(), entry.GetToNodeId(), entry.GetSizeByte(), entry.GetStartTimeNs()
+            );
 
             // Write nicely formatted to the text
             char str_size_megabit[100];
@@ -224,16 +240,22 @@ void TcpFlowScheduler::WriteResults() {
             char str_sent_megabit[100];
             sprintf(str_sent_megabit, "%.2f Mbit", byte_to_megabit(sent_byte));
             char str_progress_perc[100];
-            sprintf(str_progress_perc, "%.1f%%", ((double) sent_byte) / ((double) entry.GetSizeByte()) * 100.0);
+            sprintf(str_progress_perc, "%.4f%%", ((double) sent_byte) / ((double) entry.GetSizeByte()) * 100.0);
             char str_avg_rate_megabit_per_s[100];
-            sprintf(str_avg_rate_megabit_per_s, "%.1f Mbit/s", byte_to_megabit(sent_byte) / nanosec_to_sec(fct_ns));
+            sprintf(str_avg_rate_megabit_per_s, "%.4f Mbit/s", byte_to_megabit(sent_byte) / nanosec_to_sec(fct_ns));
             fprintf(
                     file_txt, "%-16" PRId64 "%-10" PRId64 "%-10" PRId64 "%-16s%-18" PRId64 "%-18" PRId64 "%-16s%-16s%-13s%-16s%-14s%s\n",
                     entry.GetTcpFlowId(), entry.GetFromNodeId(), entry.GetToNodeId(), str_size_megabit, entry.GetStartTimeNs(),
                     entry.GetStartTimeNs() + fct_ns, str_duration_ms, str_sent_megabit, str_progress_perc, str_avg_rate_megabit_per_s,
                     finished_state.c_str(), entry.GetMetadata().c_str()
             );
+            char avg_rate_str[100];
+            sprintf(avg_rate_str, "%.4f", byte_to_megabit(sent_byte) / nanosec_to_sec(fct_ns));
 
+            fprintf(
+                    tcp_result_csv, "%" PRId64 ",%" PRId64 ",%f,%s\n",
+                    entry.GetFromNodeId(), entry.GetToNodeId(), fct_ns/(double)(1000 * 1000 * 1000), avg_rate_str
+            );
             // Move on application index
             app_idx += 1;
 
@@ -243,9 +265,13 @@ void TcpFlowScheduler::WriteResults() {
         std::cout << "  > Closing TCP flow log files:" << std::endl;
         fclose(file_csv);
         std::cout << "    >> Closed: " << m_flows_csv_filename << std::endl;
+        fclose(traffic_csv);
+        std::cout << "    >> Closed: " << m_traffic_csv_filename << std::endl;
+        fclose(tcp_result_csv);
+        std::cout << "    >> Closed: " << m_tcp_results_filename << std::endl;
         fclose(file_txt);
         std::cout << "    >> Closed: " << m_flows_txt_filename << std::endl;
-
+        
         // Register completion
         std::cout << "  > TCP flow log files have been written" << std::endl;
         m_basicSimulation->RegisterTimestamp("Write TCP flow log files");

@@ -77,7 +77,8 @@ protected:
     std::vector<int64_t> m_distributed_node_system_id_assignment;
     std::string m_flows_csv_filename;
     std::string m_flows_txt_filename;
-
+    std::string m_traffic_csv_filename;
+    std::string m_tcp_results_filename;
 };
 
 }
