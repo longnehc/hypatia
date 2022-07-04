@@ -120,6 +120,13 @@ public:
   JulianDate GetTleEpoch (void) const;
 
   /**
+  * @brief Retrieve the simulation start time.
+  * @return the simulation start time, or 0h, 1 January 1992 if the satellite has not
+  *         yet been initialized.
+  */
+  JulianDate GetSimStartTime (void) const;
+
+  /**
    * @brief Get the prediction for the satellite's position at a given time.
    * @param t When.
    * @return an ns3::Vector3D object containing the satellite's position,
@@ -163,6 +170,12 @@ public:
    * @return a boolean indicating whether the initialization succeeded.
    */
   bool SetTleInfo (const std::string &line1, const std::string &line2);
+
+  /**
+   * @brief Set the simulation start time.
+   * @param sim_start_time The simulation start time.
+   */
+  void SetSimStartTime (const std::string &sim_start_time);
 
   /**
    * @brief Extract the satellite's name from a string.
@@ -250,6 +263,7 @@ private:
   std::string m_name;                               //!< satellite's name.
   std::string m_tle1, m_tle2;                       //!< satellite's TLE data.
   mutable elsetrec m_sgp4_record;                   //!< SGP4/SDP4 record.
+  std::string m_sim_start_time;                     // simulation start time: 2000-01-01 00:00:00.000
 };
 
 }

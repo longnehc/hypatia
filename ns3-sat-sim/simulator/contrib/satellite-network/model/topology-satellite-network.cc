@@ -141,6 +141,17 @@ namespace ns3 {
             satellite->SetName(name);
             satellite->SetTleInfo(tle1, tle2);
 
+            // Check if custom simulation start time file exists.
+            // If exists, store simulation start time on Satellite objects
+            std::ifstream fs_sim_start;
+            fs_sim_start.open(m_satellite_network_dir + "/sim_start.txt");
+            if (fs_sim_start.is_open()) {
+                std::string sim_start_time;
+                std::getline(fs_sim_start, sim_start_time);
+                satellite->SetSimStartTime(sim_start_time);
+            }
+            fs_sim_start.close();
+
             // Decide the mobility model of the satellite
             MobilityHelper mobility;
             if (m_satellite_network_force_static) {

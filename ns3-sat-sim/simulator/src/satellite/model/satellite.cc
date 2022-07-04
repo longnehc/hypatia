@@ -63,6 +63,8 @@ Satellite::Satellite (void) :
   NS_LOG_FUNCTION_NOARGS ();
 
   m_sgp4_record.jdsatepoch = 0;
+
+  m_sim_start_time = "";
 }
 
 uint32_t
@@ -89,6 +91,15 @@ Satellite::GetTleEpoch (void) const {
     return JulianDate (m_sgp4_record.jdsatepoch);
 
   return JulianDate ();
+}
+
+JulianDate
+Satellite::GetSimStartTime (void) const
+{
+  if (IsInitialized () && m_sim_start_time != "")
+    return JulianDate(m_sim_start_time, DateTime::UTC);
+
+  return GetTleEpoch ();
 }
 
 Vector3D
@@ -189,6 +200,12 @@ Satellite::SetName (const std::string &name)
   NS_ASSERT_MSG (!name.empty (), "Name cannot be empty!");
 
   m_name = name.substr (0, name.find_last_not_of (" ") + 1);
+}
+
+void
+Satellite::SetSimStartTime (const std::string &sim_start_time)
+{
+  m_sim_start_time = std::string (sim_start_time.c_str ());
 }
 
 bool

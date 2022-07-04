@@ -37,7 +37,7 @@ SatellitePositionHelper::SatellitePositionHelper (void)
 SatellitePositionHelper::SatellitePositionHelper (Ptr<Satellite> sat)
 {
   SetSatellite (sat);
-  SetStartTime (sat->GetTleEpoch ());
+  SetStartTime (sat->GetSimStartTime ());
 }
 
 SatellitePositionHelper::SatellitePositionHelper(
