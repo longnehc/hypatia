@@ -22,7 +22,7 @@
 
 # Core values
 dynamic_state_update_interval_ms = 1000                         # 100 millisecond update interval
-simulation_end_time_s = 10                                      # 200 seconds
+simulation_end_time_s = 5                                     # 200 seconds
 pingmesh_interval_ns = 1 * 1000 * 1000                          # A ping every 1ms
 enable_isl_utilization_tracking = True                          # Enable utilization tracking
 isl_utilization_tracking_interval_ns = 1 * 1000 * 1000 * 1000   # 1 second utilization intervals
@@ -34,7 +34,8 @@ dynamic_state = "dynamic_state_" + str(dynamic_state_update_interval_ms) + "ms_f
 
 # Chosen pairs:
 # > Manila (17) to Dalian (18)
-full_satellite_network_isls = "starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls" 
+full_satellite_network_isls = "starlink_550_isls_none_ground_stations_top_100_algorithm_free_one_only_gs_relays" 
+#full_satellite_network_isls="starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls"
 chosen_pairs = [
     ("starlink_550_isls_sat_one", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
 ]

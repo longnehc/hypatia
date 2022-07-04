@@ -74,14 +74,17 @@ PingmeshScheduler::PingmeshScheduler(Ptr<BasicSimulation> basicSimulation, Ptr<T
         if (m_enable_distributed) {
             m_pingmesh_csv_filename = m_basicSimulation->GetLogsDir() + "/system_" + std::to_string(m_system_id) + "_pingmesh.csv";
             m_pingmesh_txt_filename = m_basicSimulation->GetLogsDir() + "/system_" + std::to_string(m_system_id) + "_pingmesh.txt";
+            m_ping_results_filename = m_basicSimulation->GetLogsDir() + "/system_" + std::to_string(m_system_id) + "/tcp-results.csv";    
         } else {
             m_pingmesh_csv_filename = m_basicSimulation->GetLogsDir() + "/pingmesh.csv";
-            m_pingmesh_txt_filename = m_basicSimulation->GetLogsDir() + "/pingmesh.txt";
+            m_pingmesh_txt_filename = m_basicSimulation->GetLogsDir() + "/pingmesh.txt"; 
+            m_ping_results_filename = m_basicSimulation->GetLogsDir() + "/ping-results.csv";
         }
 
         // Remove files if they are there
         remove_file_if_exists(m_pingmesh_csv_filename);
         remove_file_if_exists(m_pingmesh_txt_filename);
+        remove_file_if_exists(m_ping_results_filename);
         printf("  > Removed previous pingmesh log files if present\n");
         m_basicSimulation->RegisterTimestamp("Remove previous pingmesh log files");
 
@@ -152,7 +155,9 @@ void PingmeshScheduler::WriteResults() {
         std::cout << "    >> Opened: " << m_pingmesh_csv_filename << std::endl;
         FILE* file_txt = fopen(m_pingmesh_txt_filename.c_str(), "w+");
         std::cout << "    >> Opened: " << m_pingmesh_txt_filename << std::endl;
-
+        FILE* ping_result_csv = fopen(m_ping_results_filename.c_str(), "w+");
+        std::cout << "    >> Opened: " << m_ping_results_filename << std::endl;
+        
         // Header
         std::cout << "  > Writing pingmesh.txt header" << std::endl;
         fprintf(file_txt, "%-10s%-10s%-22s%-22s%-16s%-16s%-16s%-16s%s\n",
@@ -247,7 +252,10 @@ void PingmeshScheduler::WriteResults() {
                     file_txt, "%-10" PRId64 "%-10" PRId64 "%-22s%-22s%-16s%-16s%-16s%-16s%d/%d (%d%%)\n",
                     from_node_id, to_node_id, str_latency_to_there_ms, str_latency_from_there_ms, str_min_rtt_ms, str_mean_rtt_ms, str_max_rtt_ms, str_sample_std_rtt_ms, total, sent, (int) std::round(((double) total / (double) sent) * 100.0)
             );
-
+            fprintf(
+                    ping_result_csv, "%" PRId64 ",%" PRId64 ",%.4f,%.4f,%.4f\n",
+                    from_node_id, to_node_id, nanosec_to_millisec(min_rtt_ns), nanosec_to_millisec(mean_rtt_ns), nanosec_to_millisec(max_rtt_ns)
+            );
         }
 
         // Close files
@@ -256,7 +264,8 @@ void PingmeshScheduler::WriteResults() {
         std::cout << "    >> Closed: " << m_pingmesh_csv_filename << std::endl;
         fclose(file_txt);
         std::cout << "    >> Closed: " << m_pingmesh_txt_filename << std::endl;
-
+        fclose(ping_result_csv);
+        std::cout << "    >> Closed: " << m_ping_results_filename << std::endl;
         // Register completion
         std::cout << "  > Pingmesh log files have been written" << std::endl;
         m_basicSimulation->RegisterTimestamp("Write pingmesh log files");

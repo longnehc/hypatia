@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import exputil
+import random
 
 try:
     from .run_list import *
@@ -121,11 +122,40 @@ for run in get_pings_run_list():
                                               "[ISL-UTILIZATION-TRACKING-INTERVAL-NS-COMPLETE]", "")
     local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
                                           "[PINGMESH-INTERVAL-NS]", str(run["pingmesh_interval_ns"]))
+    ping_pairs = []
+    for i in range(0, 77):
+        for j in range(0, 77):
+            if i != j: 
+                ping_pairs.append([i,j]) 
+    index_list = random.sample(range(0, len(ping_pairs)), 100)
+    for i in range(len(index_list)):
+        print(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
+    with open(run_dir + "/config_ns3.properties", 'a') as f:
+        f.write('pingmesh_endpoint_pairs=set(')
+        for i in range(len(index_list)):
+            f.write(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
+            if i != len(index_list) - 1:
+                f.write(',')
+        f.write(')')
+    '''
+    with open(run_dir + "/config_ns3.properties", 'a') as f:
+        f.write('pingmesh_endpoint_pairs=set(')
+        for i in range(0, 77):
+            for j in range(0, 77):
+                if i < j:
+                    f.write(str(22 * 72 + i)+'->'+str(22 * 72 + j))
+                    if i == 75 and j == 76:
+                        pass
+                    else:
+                        f.write(',')
+        f.write(')')
+    '''
+    '''
     local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
                                           "[FROM]", str(run["from_id"]))
     local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
                                           "[TO]", str(run["to_id"]))
-
+    '''
 # Print finish
 print("Success: generated ns-3 ping runs")
 

@@ -2,6 +2,14 @@ import argparse
 import exputil
 import networkload
 import random
+import os
+
+import exputil
+
+try:
+    from .run_list import *
+except (ImportError, SystemError):
+    from run_list import *
 
 
 # Set up random seeds
@@ -9,6 +17,8 @@ random.seed(123456789)
 SEED_START_TIMES = random.randint(0, 100000000)
 SEED_FROM_TO = random.randint(0, 100000000)
 SEED_FLOW_SIZE = random.randint(0, 100000000)
+local_shell = exputil.LocalShell()
+
 
 
 def generate_tcp_schedule(
@@ -27,7 +37,7 @@ def generate_tcp_schedule(
     duration_ns = seconds_in_ns(duration_seconds)
     list_start_time_ns = networkload.draw_poisson_inter_arrival_gap_start_times_ns(duration_ns, expected_flows_per_s, SEED_START_TIMES)
     num_starts = len(list_start_time_ns)
-
+    print(num_starts)
     # Get (From, To) tuples for each start time
     list_from_to = networkload.draw_n_times_from_to_all_to_all(num_starts, servers, SEED_FROM_TO)
 
@@ -44,6 +54,12 @@ def generate_tcp_schedule(
         list_flow_size_byte,
         list_start_time_ns
     )
+    for run in get_tcp_run_list():
+        target_dir = "temp/runs/" + run["name"]
+        print(target_dir)
+        local_shell.detached_exec("mv schedule.csv "+target_dir)
+
+
 
 
 def seconds_in_ns(seconds):
@@ -51,6 +67,8 @@ def seconds_in_ns(seconds):
 
 
 if __name__ == '__main__':
+    if os.path.exists('schedule.csv'): 
+        os.remove('schedule.csv') 
     parser = argparse.ArgumentParser(description='Generate a TCP flow schedule csv file.')
     parser.add_argument('--start_id', action="store", dest="start_id", type=int)
     parser.add_argument('--end_id', action="store", dest="end_id", type=int)
