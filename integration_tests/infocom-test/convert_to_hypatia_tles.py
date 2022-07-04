@@ -8,7 +8,9 @@ def convert_to_hypatia_tles(filepath):
     sat_id = 0
     with open(filepath, 'r') as f:
         for line in f:
-            output_lines.append(clean_string(line.strip() + ' ' + str(sat_id)))  # Satellite name and ID
+            name = clean_string(line.strip() + ' ' + str(sat_id))
+            name = clean_name(name)
+            output_lines.append(name)  # Satellite name and ID
             output_lines.append(clean_string(f.readline()))  # TLE line 1
             output_lines.append(clean_string(f.readline()))  # TLE line 2
             sat_id += 1
@@ -24,6 +26,14 @@ def convert_to_hypatia_tles(filepath):
 
 def clean_string(s):
     return s.replace('\n', '').strip() + '\n'
+
+
+def clean_name(name):
+    # The name contains a white space
+    split_name = name.split()
+    if len(split_name) == 3:
+        return split_name[0] + split_name[1] + ' ' + split_name[2] + '\n'
+    return name
 
 
 if __name__ == '__main__':
