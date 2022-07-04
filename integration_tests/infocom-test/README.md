@@ -1,8 +1,8 @@
 step 1: generate topology：
 simulation start time:
-    In step_1_starlink_generation.py, specify the simulation start time in the variable SIM_START_TIME.
-    Example of simulation start time: '2000-01-01 00:00:00.000'
-    If you want to use Hypatia's default (use epoch as the simulation start time), assign None to SIM_START_TIME.
+    In ```step_1_starlink_generation.py```, specify the simulation start time in the variable ```SIM_START_TIME```.
+    Example of simulation start time: ```'2000-01-01 00:00:00.000'```
+    If you want to use Hypatia's default (use epoch as the simulation start time), assign ```None``` to ```SIM_START_TIME```.
 
 with isl:
     python step_1_starlink_generation.py 200 1000 isls_plus_grid ground_stations_top_100 algorithm_free_one_only_over_isls ${num_threads}
@@ -11,6 +11,16 @@ bent-pipe:
     python step_1_starlink_generation.py 200 1000 isls_none ground_stations_paris_moscow_grid algorithm_free_one_only_gs_relays ${num_threads}
     python step_1_starlink_generation.py 5 1000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
 
+load supplemental TLEs:
+    Use ```convert_to_hypatia.py``` to convert the supplemental TLEs to Hypatia's TLE file format.
+    The converted TLE file is located at the same folder as ```tles.txt```.
+    Copy and paste the converted tle to the ```tles.txt``` in ```gen_data``` folder.
+    Comment out the TLEs generation code in ```main_helper.calculate```.
+    Comment out the same epoch restriction check in ```read_tles.py```
+    In ```step_1_starlink_generation.py```, change ```NUM_ORBS``` to ```1```, 
+    and change ```NUM_SATS_PER_ORB``` to number of satellites.
+    Specify the simulation start time ```SIM_START_TIME``` in ```step_1_starlink_generation.py```.
+    Make sure ```SIM_START_TIME``` is after the epoch of all satellites. For example, after one day.
 
 step 2: generate conig_ns3.properties
     python step_2_generate_runs.py
