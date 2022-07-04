@@ -65,7 +65,7 @@ class MainHelper:
             gs_selection,             # ground_stations_{top_100, paris_moscow_grid}
             dynamic_state_algorithm,  # algorithm_{free_one_only_{gs_relays,_over_isls}, paired_many_only_over_isls}
             num_threads,
-            sim_start=None,           # string of simulation start time
+            sim_start=None,           # string of simulation start time: '2000-01-01 00:00:00.000'
     ):
 
         # Add base name to setting
