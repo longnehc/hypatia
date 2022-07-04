@@ -58,6 +58,8 @@ NUM_ORBS = 72
 NUM_SATS_PER_ORB = 22
 INCLINATION_DEGREE = 53
 
+SIM_START_TIME = '2000-01-01 00:00:00.000'
+
 ################################################################
 
 
@@ -96,6 +98,7 @@ def main():
             args[3],
             args[4],
             int(args[5]),
+            sim_start=SIM_START_TIME,
         )
 
 

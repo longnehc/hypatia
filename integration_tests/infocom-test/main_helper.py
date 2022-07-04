@@ -64,7 +64,8 @@ class MainHelper:
             isl_selection,            # isls_{none, plus_grid}
             gs_selection,             # ground_stations_{top_100, paris_moscow_grid}
             dynamic_state_algorithm,  # algorithm_{free_one_only_{gs_relays,_over_isls}, paired_many_only_over_isls}
-            num_threads
+            num_threads,
+            sim_start=None,           # string of simulation start time
     ):
 
         # Add base name to setting
@@ -104,6 +105,11 @@ class MainHelper:
             self.ARG_OF_PERIGEE_DEGREE,
             self.MEAN_MOTION_REV_PER_DAY
         )
+
+        # Generate simulation start time file
+        if sim_start is not None:
+            with open(output_generated_data_dir + "/" + name + "/sim_start.txt", 'w') as f:
+                f.write(sim_start + "\n")
 
         # ISLs
         print("Generating ISLs...")

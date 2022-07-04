@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import ephem
+import os.path
 from astropy.time import Time
 from astropy import units as u
 
@@ -70,6 +71,13 @@ def read_tles(filename_tles):
 
             # Finally, store the satellite information
             satellites.append(ephem.readtle(tles_line_1, tles_line_2, tles_line_3))
+
+    # If sim_start.txt exists, use the given simulation start time
+    sim_start_filepath = os.path.dirname(filename_tles) + '/sim_start.txt'
+    if os.path.exists(sim_start_filepath):
+        with open(sim_start_filepath, 'r') as f:
+            sim_time = f.readline()
+            epoch = Time(sim_time)
 
     return {
         "n_orbits": n_orbits,
