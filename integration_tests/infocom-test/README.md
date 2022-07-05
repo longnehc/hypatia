@@ -21,6 +21,7 @@ load supplemental TLEs:
     and change ```NUM_SATS_PER_ORB``` to number of satellites.
     Specify the simulation start time ```SIM_START_TIME``` in ```step_1_starlink_generation.py```.
     Make sure ```SIM_START_TIME``` is after the epoch of all satellites. For example, after one day.
+    Run ```step_1_starlink_generation.py``` again to regenerate forwarding states with supplemental TLEs.
 
 step 2: generate conig_ns3.properties
     python step_2_generate_runs.py
