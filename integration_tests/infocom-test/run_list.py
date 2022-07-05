@@ -37,7 +37,7 @@ dynamic_state = "dynamic_state_" + str(dynamic_state_update_interval_ms) + "ms_f
 full_satellite_network_isls = "starlink_550_isls_none_ground_stations_top_100_algorithm_free_one_only_gs_relays" 
 #full_satellite_network_isls="starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls"
 chosen_pairs = [
-    ("starlink_550_isls_sat_one", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
+    ("starlink_550_isls_none", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
 ]
 
 
@@ -46,7 +46,7 @@ def get_tcp_run_list():
     for p in chosen_pairs:
         run_list += [
             {
-                "name": p[0] + "_" + str(p[1]) + "_to_" + str(p[2]) + "_tcp",
+                "name": p[0] + "_tcp",
                 "satellite_network": p[4],
                 "dynamic_state": dynamic_state,
                 "dynamic_state_update_interval_ns": dynamic_state_update_interval_ns,
@@ -67,7 +67,7 @@ def get_pings_run_list():
     for p in chosen_pairs:
         run_list += [
             {
-                "name": p[0] + "_" + str(p[1]) + "_to_" + str(p[2]) + "_pings",
+                "name": p[0] +  "_pings",
                 "satellite_network": p[4],
                 "dynamic_state": dynamic_state,
                 "dynamic_state_update_interval_ns": dynamic_state_update_interval_ns,
@@ -89,7 +89,7 @@ def get_udp_run_list():
     for p in chosen_pairs:
         run_list += [
             {
-                "name": p[0] + "_" + str(p[1]) + "_to_" + str(p[2]) + "_udp",
+                "name": p[0] + "_udp",
                 "satellite_network": p[4],
                 "dynamic_state": dynamic_state,
                 "dynamic_state_update_interval_ns": dynamic_state_update_interval_ns,
