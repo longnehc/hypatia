@@ -47,6 +47,7 @@ def generate_tcp_schedule(
 
     if n_flows > 0:
         list_start_time_ns = random.choices(list_start_time_ns, k=n_flows)
+        list_start_time_ns.sort()
 
     num_starts = len(list_start_time_ns)
     # Get (From, To) tuples for each start time
