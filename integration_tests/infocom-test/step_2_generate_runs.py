@@ -129,7 +129,8 @@ for run in get_pings_run_list():
                 ping_pairs.append([i,j]) 
     index_list = random.sample(range(0, len(ping_pairs)), 100)
     for i in range(len(index_list)):
-        print(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
+        pass
+        #print(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
     with open(run_dir + "/config_ns3.properties", 'a') as f:
         f.write('pingmesh_endpoint_pairs=set(')
         for i in range(len(index_list)):
