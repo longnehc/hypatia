@@ -73,6 +73,30 @@ for run in get_tcp_run_list():
                                               "[ISL-UTILIZATION-TRACKING-INTERVAL-NS-COMPLETE]", "")
     local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
                                           "[TCP-SOCKET-TYPE]", str(run["tcp_socket_type"]))
+    # enable ping and tcp run at the same time
+    ping_pairs = []
+    for i in range(0, 77):
+        for j in range(0, 77):
+            if i != j: 
+                ping_pairs.append([i,j]) 
+    index_list = random.sample(range(0, len(ping_pairs)), 100)
+    for i in range(len(index_list)):
+        pass
+        #print(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
+    tcp_flow_num=100
+    with open(run_dir + "/config_ns3.properties", 'a') as f:
+        f.write('tcp_flow_enable_logging_for_tcp_flow_ids=set(')
+        for i in range(tcp_flow_num):
+            f.write(str(i))
+            if i!=tcp_flow_num-1:
+                f.write(',')    
+        f.write(')\n')
+        f.write('pingmesh_endpoint_pairs=set(')
+        for i in range(len(index_list)):
+            f.write(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
+            if i != len(index_list) - 1:
+                f.write(',')
+        f.write(')')
 
     # schedule.csv
     local_shell.copy_file("templates/template_tcp_a_b_schedule.csv", run_dir + "/schedule.csv")

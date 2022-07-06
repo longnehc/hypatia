@@ -4,6 +4,8 @@ dev_testing/
 temp_data/
 gen_data/
 data/
+dataset/
 temp/
 runs/
 *.txt
+*.log

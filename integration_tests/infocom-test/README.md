@@ -38,6 +38,7 @@ PING:
 UDP:
     python step_3_udp_run.py
 
+
 ===========
 Log file:
     isl_delay.csv
@@ -102,3 +103,8 @@ This is an online TLE parser where you can paste the TLE directly to retrieve th
 https://orbit.ing-now.com/satellite/74171/2022-062ba/starlink-4171/
 
 You can look up a Starlink satellite by name on this website, which shows the basic orbital information about the satellite, and an animation of the orbit on the map. 
+
+
+===========
+generate dataset
+nohup bash run.bash > run.log 2>&1 &
