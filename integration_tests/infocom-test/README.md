@@ -60,6 +60,17 @@ logging location:
         topology->GetGSLDelay();
 
 ===========
+
+Visualize Supplemental TLEs
+    Convert the supplemental TLEsto Hypatia's format using convert_to_hypatia_tles.py
+    In visualize_tles.py, specify the tle file path and EPOCH
+    EPOCH is the point of time for the visualization
+    Run visualize_tles.py
+    There will be an html file called tles_visualization.html
+    Open the html file and you will see the visualization
+
+===========
+
 other useful commands:
 run ns3 with gdb
     ./waf --run="main_satnet --run_dir='../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps'" --gdb
