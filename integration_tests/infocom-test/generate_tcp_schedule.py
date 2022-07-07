@@ -12,7 +12,7 @@ except (ImportError, SystemError):
 
 
 # Set up random seeds
-random.seed(123456789)
+# random.seed(123456789)
 SEED_START_TIMES = random.randint(0, 100000000)
 SEED_FROM_TO = random.randint(0, 100000000)
 SEED_FLOW_SIZE = random.randint(0, 100000000)
