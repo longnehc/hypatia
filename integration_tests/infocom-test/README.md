@@ -61,6 +61,17 @@ logging location:
         topology->GetGSLDelay();
 
 ===========
+TLEs Visualization
+
+Convert the supplemental TLEsto Hypatia's format using convert_to_hypatia_tles.py
+
+Run script
+    python visualize_tles.py --tle ../tles.txt
+
+Open tles_visualization.html in the same folder to see the visualization
+
+===========
+
 other useful commands:
 run ns3 with gdb
     ./waf --run="main_satnet --run_dir='../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps'" --gdb
