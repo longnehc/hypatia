@@ -23,6 +23,7 @@
 import sys
 import math
 from main_helper import MainHelper
+from convert_to_hypatia_tles import count_sat_in_tles
 
 # WGS72 value; taken from https://geographiclib.sourceforge.io/html/NET/NETGeographicLib_8h_source.html
 EARTH_RADIUS = 6378135.0
@@ -58,10 +59,17 @@ NUM_ORBS = 72
 NUM_SATS_PER_ORB = 22
 INCLINATION_DEGREE = 53
 
-SIM_START_TIME = '2000-01-01 00:00:00.000'
-
 ################################################################
 
+FEATURE_ENABLE = {
+    'supplemental_tle': False,
+}
+
+if FEATURE_ENABLE and FEATURE_ENABLE['supplemental_tle']:
+    NUM_ORBS = 1
+    NUM_SATS_PER_ORB = count_sat_in_tles('starlink_supplemental_tles.txt')
+
+################################################################
 
 main_helper = MainHelper(
     BASE_NAME,
@@ -98,7 +106,7 @@ def main():
             args[3],
             args[4],
             int(args[5]),
-            sim_start=SIM_START_TIME,
+            feature_enable=FEATURE_ENABLE,
         )
 
 

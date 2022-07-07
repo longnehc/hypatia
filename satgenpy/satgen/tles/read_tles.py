@@ -20,13 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import datetime
 import ephem
 import os.path
 from astropy.time import Time
 from astropy import units as u
 
 
-def read_tles(filename_tles):
+def read_tles(filename_tles, feature_enable=None):
     """
     Read a constellation of satellites from the TLES file.
 
@@ -66,18 +67,26 @@ def read_tles(filename_tles):
             epoch = Time("20" + epoch_year + "-01-01 00:00:00", scale="tdb") + (epoch_day - 1) * u.day
             if universal_epoch is None:
                 universal_epoch = epoch
-            if epoch != universal_epoch:
-                raise ValueError("The epoch of all TLES must be the same")
+
+            if feature_enable and feature_enable['supplemental_tle']:
+                pass
+            else:
+                if epoch != universal_epoch:
+                    raise ValueError("The epoch of all TLES must be the same")
 
             # Finally, store the satellite information
             satellites.append(ephem.readtle(tles_line_1, tles_line_2, tles_line_3))
 
-    # If sim_start.txt exists, use the given simulation start time
-    sim_start_filepath = os.path.dirname(filename_tles) + '/sim_start.txt'
-    if os.path.exists(sim_start_filepath):
-        with open(sim_start_filepath, 'r') as f:
-            sim_time = f.readline()
-            epoch = Time(sim_time)
+    if feature_enable and feature_enable['supplemental_tle']:
+        # Use next day 00:00:00 of the satellite's epoch as simulation start time
+        ymd= satellites[0].epoch.tuple()  # year, month, day
+        sim_start = Time(datetime.datetime(ymd[0], ymd[1], ymd[2] + 1), scale="tdb")
+        epoch = sim_start  # Use custom simulation start time
+
+        # Write simulation start time to a txt file for ns3
+        _dir = os.path.dirname(filename_tles)
+        with open(_dir + '/sim_start.txt', 'w') as sim_f:
+            sim_f.write(sim_start.strftime("%Y-%m-%d %H:%M:%S") + '\n')
 
     return {
         "n_orbits": n_orbits,

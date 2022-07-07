@@ -73,7 +73,8 @@ def worker(args):
 
 def help_dynamic_state(
         output_generated_data_dir, num_threads, name, time_step_ms, duration_s,
-        max_gsl_length_m, max_isl_length_m, dynamic_state_algorithm, print_logs
+        max_gsl_length_m, max_isl_length_m, dynamic_state_algorithm, print_logs,
+        feature_enable=None,
 ):
 
     # Directory
@@ -102,7 +103,7 @@ def help_dynamic_state(
 
         # Variables (load in for each thread such that they don't interfere)
         ground_stations = read_ground_stations_extended(output_generated_data_dir + "/" + name + "/ground_stations.txt")
-        tles = read_tles(output_generated_data_dir + "/" + name + "/tles.txt")
+        tles = read_tles(output_generated_data_dir + "/" + name + "/tles.txt", feature_enable=feature_enable)
         satellites = tles["satellites"]
         list_isls = read_isls(output_generated_data_dir + "/" + name + "/isls.txt", len(satellites))
         list_gsl_interfaces_info = read_gsl_interfaces_info(

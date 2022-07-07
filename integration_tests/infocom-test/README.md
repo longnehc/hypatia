@@ -11,17 +11,10 @@ bent-pipe:
     python step_1_starlink_generation.py 200 1000 isls_none ground_stations_paris_moscow_grid algorithm_free_one_only_gs_relays ${num_threads}
     python step_1_starlink_generation.py 5 1000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
 
-load supplemental TLEs:
-    Use ```convert_to_hypatia.py``` to convert the supplemental TLEs to Hypatia's TLE file format.
-    The converted TLE file is located at the same folder as ```tles.txt```.
-    Copy and paste the converted tle to the ```tles.txt``` in ```gen_data``` folder.
-    Comment out the TLEs generation code in ```main_helper.calculate```.
-    Comment out the same epoch restriction check in ```read_tles.py```
-    In ```step_1_starlink_generation.py```, change ```NUM_ORBS``` to ```1```, 
-    and change ```NUM_SATS_PER_ORB``` to number of satellites.
-    Specify the simulation start time ```SIM_START_TIME``` in ```step_1_starlink_generation.py```.
-    Make sure ```SIM_START_TIME``` is after the epoch of all satellites. For example, after one day.
-    Run ```step_1_starlink_generation.py``` again to regenerate forwarding states with supplemental TLEs.
+use supplemental TLEs to generate forwarding states:
+    Place the supplemental TLE files in infocom-test folder and name it as starlink_supplemental_tles.txt
+    In step_1_starlink_generation.py, change FEATURE_ENABLE['supplemental_tle'] to True.
+    Run step_1_starlink_generation.py as usual. The script will use the supplemental TLEs to generate forwarding states.
 
 step 2: generate conig_ns3.properties
     python step_2_generate_runs.py

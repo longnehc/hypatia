@@ -24,6 +24,7 @@ import sys
 sys.path.append("../../satgenpy")
 import satgen
 import os
+from convert_to_hypatia_tles import convert_to_hypatia_tles
 
 
 class MainHelper:
@@ -65,7 +66,7 @@ class MainHelper:
             gs_selection,             # ground_stations_{top_100, paris_moscow_grid}
             dynamic_state_algorithm,  # algorithm_{free_one_only_{gs_relays,_over_isls}, paired_many_only_over_isls}
             num_threads,
-            sim_start=None,           # string of simulation start time: '2000-01-01 00:00:00.000'
+            feature_enable=None,      # indicate whether a feature is enabled
     ):
 
         # Add base name to setting
@@ -92,24 +93,24 @@ class MainHelper:
         else:
             raise ValueError("Unknown ground station selection: " + gs_selection)
 
-        # TLEs
-        print("Generating TLEs...")
-        satgen.generate_tles_from_scratch_manual(
-            output_generated_data_dir + "/" + name + "/tles.txt",
-            self.NICE_NAME,
-            self.NUM_ORBS,
-            self.NUM_SATS_PER_ORB,
-            self.PHASE_DIFF,
-            self.INCLINATION_DEGREE,
-            self.ECCENTRICITY,
-            self.ARG_OF_PERIGEE_DEGREE,
-            self.MEAN_MOTION_REV_PER_DAY
-        )
-
-        # Generate simulation start time file
-        if sim_start is not None:
-            with open(output_generated_data_dir + "/" + name + "/sim_start.txt", 'w') as f:
-                f.write(sim_start + "\n")
+        if feature_enable and feature_enable['supplemental_tle']:
+            # Convert supplemental TLEs to Hypatia's file format
+            convert_to_hypatia_tles('starlink_supplemental_tles.txt',
+                                    output_dir=output_generated_data_dir + "/" + name)
+        else:
+            # TLEs
+            print("Generating TLEs...")
+            satgen.generate_tles_from_scratch_manual(
+                output_generated_data_dir + "/" + name + "/tles.txt",
+                self.NICE_NAME,
+                self.NUM_ORBS,
+                self.NUM_SATS_PER_ORB,
+                self.PHASE_DIFF,
+                self.INCLINATION_DEGREE,
+                self.ECCENTRICITY,
+                self.ARG_OF_PERIGEE_DEGREE,
+                self.MEAN_MOTION_REV_PER_DAY
+            )
 
         # ISLs
         print("Generating ISLs...")
@@ -170,5 +171,6 @@ class MainHelper:
             self.MAX_GSL_LENGTH_M,
             self.MAX_ISL_LENGTH_M,
             dynamic_state_algorithm,
-            True
+            True,
+            feature_enable=feature_enable
         )
