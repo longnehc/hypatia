@@ -60,14 +60,14 @@ logging location:
         topology->GetGSLDelay();
 
 ===========
+TLEs Visualization
 
-Visualize Supplemental TLEs
-    Convert the supplemental TLEsto Hypatia's format using convert_to_hypatia_tles.py
-    In visualize_tles.py, specify the tle file path and EPOCH
-    EPOCH is the point of time for the visualization
-    Run visualize_tles.py
-    There will be an html file called tles_visualization.html
-    Open the html file and you will see the visualization
+Convert the supplemental TLEsto Hypatia's format using convert_to_hypatia_tles.py
+
+Run script
+    python visualize_tles.py --tle ../tles.txt
+
+Open tles_visualization.html in the same folder to see the visualization
 
 ===========
 
