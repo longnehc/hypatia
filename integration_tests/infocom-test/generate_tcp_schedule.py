@@ -76,6 +76,7 @@ def generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows):
 def random_pick_ms_flow_ids(list_from_to, n_ms_flows):
     ids = np.arange(len(list_from_to))
     ms_ids = random.sample(list(ids), k=n_ms_flows)
+    ms_ids.sort()
     return ms_ids
 
 
