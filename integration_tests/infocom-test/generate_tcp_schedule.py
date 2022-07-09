@@ -54,11 +54,17 @@ def generate_tcp_schedule(
         if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
             raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
 
-    output_filename = "temp/runs/" + get_tcp_run_list()[0]["name"] + "/schedule.csv"
-    write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, output_filename)
+    output_dir = "temp/runs/" + get_tcp_run_list()[0]["name"]
+    tcp_schedule_filename = output_dir + "/schedule.csv"
+    write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, tcp_schedule_filename)
 
     print("{} TCP measurement flows and {} TCP background flows are generated at {}."
-          .format(n_ms_flows, n_bg_flows, output_filename))
+          .format(n_ms_flows, n_bg_flows, output_dir ))
+
+    ms_flow_id_filename = output_dir + "/ms_flow_ids.txt"
+    write_ms_flow_ids(ms_flow_ids, ms_flow_id_filename)
+
+    print("TCP measurement flow IDs are written to {}.".format(ms_flow_id_filename))
 
     return ms_flow_endpoints, ms_flow_ids
 
@@ -125,6 +131,12 @@ def write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start
         list_flow_size_byte,
         list_start_time_ns
     )
+
+
+def write_ms_flow_ids(ms_flow_ids, filename):
+    with open(filename, 'w') as f:
+        for _id in ms_flow_ids:
+            f.write('{}\n'.format(_id))
 
 
 def seconds_in_ns(seconds):
