@@ -22,6 +22,9 @@
 
 import exputil
 import random
+from generate_tcp_schedule import generate_tcp_schedule
+from util import util
+
 
 try:
     from .run_list import *
@@ -73,36 +76,30 @@ for run in get_tcp_run_list():
                                               "[ISL-UTILIZATION-TRACKING-INTERVAL-NS-COMPLETE]", "")
     local_shell.sed_replace_in_file_plain(run_dir + "/config_ns3.properties",
                                           "[TCP-SOCKET-TYPE]", str(run["tcp_socket_type"]))
+
+    # Generate TCP flows
+    gen_data_dir = "temp/gen_data/" + run['satellite_network']
+    num_sats = util.count_sat_in_tles(gen_data_dir + "/tles.txt")
+    num_gs = util.count_gs_in_file(gen_data_dir + '/ground_stations.txt')
+    list_from_to = generate_tcp_schedule(num_sats, num_sats + num_gs - 1, 1, 10, 100, is_unique=True)
+
     # enable ping and tcp run at the same time
-    ping_pairs = []
-    for i in range(0, 77):
-        for j in range(0, 77):
-            if i != j: 
-                ping_pairs.append([i,j]) 
-    index_list = random.sample(range(0, len(ping_pairs)), 100)
-    for i in range(len(index_list)):
-        pass
-        #print(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
-    tcp_flow_num=100
+    ping_pairs = list_from_to  # Use the same end-points as TCP flows
     with open(run_dir + "/config_ns3.properties", 'a') as f:
         f.write('tcp_flow_enable_logging_for_tcp_flow_ids=set(')
-        for i in range(tcp_flow_num):
+        for i in range(len(list_from_to)):
             f.write(str(i))
-            if i!=tcp_flow_num-1:
+            if i != len(list_from_to)-1:
                 f.write(',')    
         f.write(')\n')
         f.write('pingmesh_endpoint_pairs=set(')
-        for i in range(len(index_list)):
-            f.write(str(ping_pairs[index_list[i]][0] + 22 * 72) + '->' +  str(ping_pairs[index_list[i]][1] + 22 * 72))
-            if i != len(index_list) - 1:
+        for i in range(len(ping_pairs)):
+            f.write( str(ping_pairs[i][0]) + '->' + str(ping_pairs[i][1]) )
+            if i != len(ping_pairs) - 1:
                 f.write(',')
         f.write(')')
-
-    # schedule.csv
-    local_shell.copy_file("templates/template_tcp_a_b_schedule.csv", run_dir + "/schedule.csv")
-    local_shell.sed_replace_in_file_plain(run_dir + "/schedule.csv", "[FROM]", str(run["from_id"]))
-    local_shell.sed_replace_in_file_plain(run_dir + "/schedule.csv", "[TO]", str(run["to_id"]))
-
+    print('100 ping pairs are generated with the same TCP end-point pairs at {}/config_ns3.properties.'
+          .format(run_dir))
 
 # Print finish
 print("Success: generated ns-3 tcp runs")

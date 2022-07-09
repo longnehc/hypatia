@@ -9,7 +9,6 @@ do
     mkdir dataset/data$i
     dir=dataset/data$i
     python step_2_generate_runs.py
-    python generate_tcp_schedule.py --start_id 1584 --end_id 1650 --duration_s 1 --expected_flows_per_s 10 -n 100
     python step_3_tcp_run.py
     cp temp/runs/starlink_550_isls_none_tcp/logs_ns3/gsl_delay.csv $dir/ 
     cp temp/runs/starlink_550_isls_none_tcp/logs_ns3/gsl_dev_queue_length.csv $dir/ 
