@@ -42,21 +42,23 @@ def generate_tcp_schedule(
     servers = set(range(start_id, end_id + 1))
     list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
     num_starts = len(list_start_time_ns)
-    list_from_to = generate_from_to_list(num_starts, servers, is_unique)
+    list_from_to = generate_from_to_list(num_starts, servers)
     list_flow_size_byte = generate_flow_size_in_byte(num_starts)
+
+    ms_flow_ids = random_pick_ms_flow_ids(list_from_to, n_ms_flows)
+    if is_unique:
+        make_endpoint_pair_unique(servers, list_from_to, ms_flow_ids)
+    ms_flow_endpoints = get_ms_flow_endpoints(list_from_to, ms_flow_ids)
+
+    for i in range(len(ms_flow_ids)):
+        if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
+            raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
 
     output_filename = "temp/runs/" + get_tcp_run_list()[0]["name"] + "/schedule.csv"
     write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, output_filename)
 
     print("{} TCP measurement flows and {} TCP background flows are generated at {}."
           .format(n_ms_flows, n_bg_flows, output_filename))
-
-    ms_flow_ids = random_pick_ms_flow_ids(list_start_time_ns, n_ms_flows)
-    ms_flow_endpoints = get_ms_flow_endpoints(list_from_to, ms_flow_ids)
-
-    for i in range(len(ms_flow_ids)):
-        if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
-            raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
 
     return ms_flow_endpoints, ms_flow_ids
 
@@ -71,10 +73,26 @@ def generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows):
     return list_start_time_ns
 
 
-def random_pick_ms_flow_ids(list_start_time_ns, n_ms_flows):
-    ids = np.arange(len(list_start_time_ns))
+def random_pick_ms_flow_ids(list_from_to, n_ms_flows):
+    ids = np.arange(len(list_from_to))
     ms_ids = random.sample(list(ids), k=n_ms_flows)
     return ms_ids
+
+
+def make_endpoint_pair_unique(servers, list_from_to, ms_flow_ids):
+    unique_endpoints = set()
+    for _id in ms_flow_ids:
+        unique_endpoints.add(list_from_to[_id])
+    # Regenerate to get enough unique ms flow ids
+    while len(unique_endpoints) < len(ms_flow_ids):
+        more_endpoints = networkload.draw_n_times_from_to_all_to_all(
+            len(ms_flow_ids) - len(unique_endpoints), servers, get_new_seed()
+        )
+        unique_endpoints.update(more_endpoints)
+    # Update list_from_to with new unique ms flow end-points
+    list_unique_eps = list(unique_endpoints)
+    for i in range(len(list_unique_eps)):
+        list_from_to[ms_flow_ids[i]] = list_unique_eps[i]
 
 
 def get_ms_flow_endpoints(list_from_to, ms_flow_ids):
@@ -84,20 +102,9 @@ def get_ms_flow_endpoints(list_from_to, ms_flow_ids):
     return ms_flow_endpoints
 
 
-def generate_from_to_list(num_starts, servers, is_unique):
+def generate_from_to_list(num_starts, servers):
     # Get (From, To) tuples for each start time
     list_from_to = networkload.draw_n_times_from_to_all_to_all(num_starts, servers, SEED_FROM_TO)
-
-    # Ensure the end-point pairs are unique
-    if is_unique:
-        set_from_to = set(list_from_to)
-        while len(set_from_to) < len(list_from_to):
-            additional_from_to = networkload.draw_n_times_from_to_all_to_all(
-                len(list_from_to) - len(set_from_to), servers, get_new_seed()
-            )
-            set_from_to.update(additional_from_to)
-        list_from_to = list(set_from_to)
-
     return list_from_to
 
 
