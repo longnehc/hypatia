@@ -81,7 +81,14 @@ for run in get_tcp_run_list():
     gen_data_dir = "temp/gen_data/" + run['satellite_network']
     num_sats = util.count_sat_in_tles(gen_data_dir + "/tles.txt")
     num_gs = util.count_gs_in_file(gen_data_dir + '/ground_stations.txt')
-    list_from_to = generate_tcp_schedule(num_sats, num_sats + num_gs - 1, 1, 10, 100, is_unique=True)
+    list_from_to = generate_tcp_schedule(
+        start_id=num_sats,
+        end_id=num_sats + num_gs - 1,
+        duration_seconds=1,
+        n_ms_flows=100,
+        n_bg_flows=200,
+        is_unique=True,
+    )
 
     # enable ping and tcp run at the same time
     ping_pairs = list_from_to  # Use the same end-points as TCP flows
