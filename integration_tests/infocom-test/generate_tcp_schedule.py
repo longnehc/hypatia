@@ -2,7 +2,7 @@ import argparse
 import exputil
 import networkload
 import random
-import os
+import numpy as np
 
 
 try:
@@ -40,7 +40,7 @@ def generate_tcp_schedule(
     @return: end-point pairs and flow ids for the measurement flows
     """
     servers = set(range(start_id, end_id + 1))
-    list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows + n_bg_flows)
+    list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
     num_starts = len(list_start_time_ns)
     list_from_to = generate_from_to_list(num_starts, servers, is_unique)
     list_flow_size_byte = generate_flow_size_in_byte(num_starts)
@@ -51,21 +51,37 @@ def generate_tcp_schedule(
     print("{} TCP measurement flows and {} TCP background flows are generated at {}."
           .format(n_ms_flows, n_bg_flows, output_filename))
 
-    return list_from_to
+    ms_flow_ids = random_pick_ms_flow_ids(list_start_time_ns, n_ms_flows)
+    ms_flow_endpoints = get_ms_flow_endpoints(list_from_to, ms_flow_ids)
+
+    for i in range(len(ms_flow_ids)):
+        if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
+            raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
+
+    return ms_flow_endpoints, ms_flow_ids
 
 
-def generate_start_time_ns(duration_seconds, n_flows):
+def generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows):
     duration_ns = seconds_in_ns(duration_seconds)
-    expected_flows_per_s = n_flows / duration_seconds * 2  # Multiply by 2 to ensure we have enough flows
-
+    expected_flows_per_s = (n_ms_flows + n_bg_flows) / duration_seconds * 3  # Get enough flows
     list_start_time_ns = networkload.draw_poisson_inter_arrival_gap_start_times_ns(
         duration_ns, expected_flows_per_s, SEED_START_TIMES)
-
-    if n_flows > 0:
-        list_start_time_ns = random.choices(list_start_time_ns, k=n_flows)
-        list_start_time_ns.sort()
-
+    list_start_time_ns = random.sample(list_start_time_ns, k=n_ms_flows + n_bg_flows)
+    list_start_time_ns.sort()
     return list_start_time_ns
+
+
+def random_pick_ms_flow_ids(list_start_time_ns, n_ms_flows):
+    ids = np.arange(len(list_start_time_ns))
+    ms_ids = random.sample(list(ids), k=n_ms_flows)
+    return ms_ids
+
+
+def get_ms_flow_endpoints(list_from_to, ms_flow_ids):
+    ms_flow_endpoints = []
+    for _id in ms_flow_ids:
+        ms_flow_endpoints.append(list_from_to[_id])
+    return ms_flow_endpoints
 
 
 def generate_from_to_list(num_starts, servers, is_unique):

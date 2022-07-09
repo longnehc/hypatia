@@ -81,7 +81,7 @@ for run in get_tcp_run_list():
     gen_data_dir = "temp/gen_data/" + run['satellite_network']
     num_sats = util.count_sat_in_tles(gen_data_dir + "/tles.txt")
     num_gs = util.count_gs_in_file(gen_data_dir + '/ground_stations.txt')
-    list_from_to = generate_tcp_schedule(
+    ms_flow_endpoints, ms_flow_ids = generate_tcp_schedule(
         start_id=num_sats,
         end_id=num_sats + num_gs - 1,
         duration_seconds=1,
@@ -91,12 +91,12 @@ for run in get_tcp_run_list():
     )
 
     # enable ping and tcp run at the same time
-    ping_pairs = list_from_to  # Use the same end-points as TCP flows
+    ping_pairs = ms_flow_endpoints  # Use the same end-points as TCP flows
     with open(run_dir + "/config_ns3.properties", 'a') as f:
         f.write('tcp_flow_enable_logging_for_tcp_flow_ids=set(')
-        for i in range(len(list_from_to)):
-            f.write(str(i))
-            if i != len(list_from_to)-1:
+        for i in range(len(ms_flow_ids)):
+            f.write(str(ms_flow_ids[i]))
+            if i != len(ms_flow_ids)-1:
                 f.write(',')    
         f.write(')\n')
         f.write('pingmesh_endpoint_pairs=set(')
