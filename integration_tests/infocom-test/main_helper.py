@@ -80,7 +80,12 @@ class MainHelper:
         print("Generating ground stations...")
         if gs_selection == "ground_stations_top_100":
             satgen.extend_ground_stations(
-                "input_data/ground_stations_paris_moscow_grid.basic.txt",
+                "input_data/ground_stations_cities_sorted_by_estimated_2025_pop_top_100.basic.txt",
+                output_generated_data_dir + "/" + name + "/ground_stations.txt"
+            )
+        elif gs_selection == "ground_stations_top_1000":
+            satgen.extend_ground_stations(
+                "input_data/ground_stations_cities_sorted_by_estimated_2025_pop_top_1000.basic.txt",
                 output_generated_data_dir + "/" + name + "/ground_stations.txt"
             )
         elif gs_selection == "ground_stations_paris_moscow_grid":
