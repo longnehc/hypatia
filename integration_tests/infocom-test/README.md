@@ -61,6 +61,17 @@ logging location:
         topology->GetGSLDelay();
 
 ===========
+TLEs Visualization
+
+Convert the supplemental TLEsto Hypatia's format using convert_to_hypatia_tles.py
+
+In the visualization folder, run the script
+    python visualize_tles.py --tle ../tles.txt
+
+Open tles_visualization.html in the same folder to see the visualization
+
+===========
+
 other useful commands:
 run ns3 with gdb
     ./waf --run="main_satnet --run_dir='../../integration_tests/infocom-test/temp/runs/starlink_550_isls_sat_one_17_to_18_with_TcpNewReno_at_10_Mbps'" --gdb
@@ -118,8 +129,30 @@ tcp-results.csv
 [src_id, dst_id, flow_completion_time_in_seconds, avg_rate]
  
  traffic.csv
-[src_id, dst_id, src_latitude, src_longitude, dst_latitude, dst_longitude, burst_size, start_time] 
+[src_id, dst_id, burst_size, start_time] 
 
+
+node_info.csv
+[device_id, interface_queue_length_0, interface_queue_length_1, ..., latitude, longtitude]
+if devide is satellite 
+   latitude = 0, longtitude = 9
+else:
+   latitude = ground station latitude
+   longtitude = ground station longtitude
+
+edge_info.csv
+[src_id, dst_id, gsl_delay_0, gsl_delay_1, ..., burst_size, start_time]
+if edge is gsl:
+   burst_size = 0, start_time =0
+else:
+   delay = 10
+   burst_size = tcp burst size
+   start time = tcp start time
+   
+label.csv
+[src_id, dst_id, flow_completion_time_in_seconds, avg_rate, min_rtt, avg_rtt, max_rtt]
+
+ 
 ===========
 generate dataset
 nohup bash run.bash > run.log 2>&1 &
