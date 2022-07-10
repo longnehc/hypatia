@@ -103,8 +103,26 @@ This is an online TLE parser where you can paste the TLE directly to retrieve th
 https://orbit.ing-now.com/satellite/74171/2022-062ba/starlink-4171/
 
 You can look up a Starlink satellite by name on this website, which shows the basic orbital information about the satellite, and an animation of the orbit on the map. 
+===========
+dataset format
+gsl_delay.csv
+[src_id, dst_id, gsl_delay_0, gsl_delay_1, ...]
 
+gsl_delay_queue_length.csv
+[device_id, interface_queue_length_0, interface_queue_length_1, ...]
+
+ping-results.csv
+[src_id, dst_id, min_rtt, avg_rtt, max_rtt]
+
+tcp-results.csv
+[src_id, dst_id, flow_completion_time_in_seconds, avg_rate]
+ 
+ traffic.csv
+[src_id, dst_id, src_latitude, src_longitude, dst_latitude, dst_longitude, burst_size, start_time] 
 
 ===========
 generate dataset
 nohup bash run.bash > run.log 2>&1 &
+
+compress dataset
+tar -zcvf dataset.tar.gz dataset

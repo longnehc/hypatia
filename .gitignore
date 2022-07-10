@@ -9,3 +9,5 @@ temp/
 runs/
 *.txt
 *.log
+*.tar.gz
+*.csv
