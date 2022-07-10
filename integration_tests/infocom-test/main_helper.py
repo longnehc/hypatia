@@ -70,6 +70,9 @@ class MainHelper:
         # Add base name to setting
         name = self.BASE_NAME + "_" + isl_selection + "_" + gs_selection + "_" + dynamic_state_algorithm
 
+        # For convenient, we use the same gs selection name
+        name = self.BASE_NAME + "_" + isl_selection + "_" + 'ground_stations_top_100' + "_" + dynamic_state_algorithm
+
         # Create output directories
         if not os.path.isdir(output_generated_data_dir):
             os.makedirs(output_generated_data_dir, exist_ok=True)
