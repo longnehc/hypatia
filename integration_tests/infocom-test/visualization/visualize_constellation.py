@@ -6,7 +6,7 @@ import os
 
 topFile = "static_html/top.html"
 bottomFile = "static_html/bottom.html"
-OUT_HTML_FILE = "tles_visualization.html"
+OUT_HTML_FILE = "constellation_visualization.html"
 
 
 def load_satellites_from_tles(tles_filepath, epoch):

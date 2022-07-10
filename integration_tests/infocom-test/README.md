@@ -61,14 +61,13 @@ logging location:
         topology->GetGSLDelay();
 
 ===========
-TLEs Visualization
 
-Convert the supplemental TLEsto Hypatia's format using convert_to_hypatia_tles.py
+Constellation Visualization
 
 In the visualization folder, run the script
-    python visualize_tles.py --tle ../tles.txt
+    python visualize_constellation.py
 
-Open tles_visualization.html in the same folder to see the visualization
+Open constellation_visualization.html in the same folder to see the visualization
 
 ===========
 
