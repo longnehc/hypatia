@@ -36,16 +36,6 @@ def clean_name(name):
     return name
 
 
-def count_sat_in_tles(filepath):
-    count = 0
-    with open(filepath, 'r') as f:
-        for line in f:
-            f.readline()
-            f.readline()
-            count += 1
-    return count
-
-
 if __name__ == '__main__':
     filepath = 'starlink_supplemental_tles.txt'
     convert_to_hypatia_tles(filepath)

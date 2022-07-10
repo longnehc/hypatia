@@ -23,7 +23,7 @@
 import sys
 import math
 from main_helper import MainHelper
-from convert_to_hypatia_tles import count_sat_in_tles
+from util import util
 
 # WGS72 value; taken from https://geographiclib.sourceforge.io/html/NET/NETGeographicLib_8h_source.html
 EARTH_RADIUS = 6378135.0
@@ -67,7 +67,7 @@ FEATURE_ENABLE = {
 
 if FEATURE_ENABLE and FEATURE_ENABLE['supplemental_tle']:
     NUM_ORBS = 1
-    NUM_SATS_PER_ORB = count_sat_in_tles('starlink_supplemental_tles.txt')
+    NUM_SATS_PER_ORB = util.count_sat_in_tles('starlink_supplemental_tles.txt')
 
 ################################################################
 
