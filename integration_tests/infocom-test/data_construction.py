@@ -2,12 +2,21 @@ import sys
 sys.path.append("../../satgenpy")
 import satgen
 
-number_of_gs=77
-simulation_time=5
+try:
+    from .run_list import *
+except (ImportError, SystemError):
+    from run_list import *
+
+
+SIM_END_TIME_S = int(get_tcp_run_list()[0]['simulation_end_time_ns'] / 1000 / 1000 / 1000)
+GEN_DATA_PATH = 'temp/gen_data/' + get_tcp_run_list()[0]['satellite_network']
+RUNS_PATH = 'temp/runs/' + get_tcp_run_list()[0]['name']
+NUM_GROUND_STATIONS = len(satgen.read_ground_stations_extended(GEN_DATA_PATH + '/ground_stations.txt'))
+
 
 def add_latitude_longitude():
-    ground_stations = satgen.read_ground_stations_basic('input_data/ground_stations_paris_moscow_grid.basic.txt')
-    with open('temp/runs/starlink_550_isls_none_tcp/logs_ns3/traffic.csv', 'r') as f_in:
+    ground_stations = satgen.read_ground_stations_extended(GEN_DATA_PATH + '/ground_stations.txt')
+    with open(RUNS_PATH + '/logs_ns3/traffic.csv', 'r') as f_in:
         with open('traffic.csv', "w+") as f_out:
             for line in f_in:
                 split = line.split(',')
@@ -77,10 +86,9 @@ def build_label():
                         raise AssertionError("Failed to find a tcp flow")
  
 
-
 def build_node_info():
-    ground_stations = satgen.read_ground_stations_basic('input_data/ground_stations_paris_moscow_grid.basic.txt')
-    with open('temp/runs/starlink_550_isls_none_tcp/logs_ns3/gsl_dev_queue_length.csv', 'r') as f_in:
+    ground_stations = satgen.read_ground_stations_extended(GEN_DATA_PATH + '/ground_stations.txt')
+    with open(RUNS_PATH + '/logs_ns3/gsl_dev_queue_length.csv', 'r') as f_in:
         with open('node_info.csv', 'w+') as f_out:
             cnt = 0
             for line in f_in:
@@ -104,7 +112,7 @@ def build_node_info():
             
 
 def build_edge_info():
-    with open('temp/runs/starlink_550_isls_none_tcp/logs_ns3/gsl_delay.csv', 'r') as f_in:
+    with open(RUNS_PATH + '/logs_ns3/gsl_delay.csv', 'r') as f_in:
         with open('edge_info.csv', 'w+') as f_out:
             for line in f_in:
                 line = line.replace('\n','')
@@ -116,10 +124,10 @@ def build_edge_info():
                 )
     traffic_list = [] 
     tcp_results_id = []
-    with open('temp/runs/starlink_550_isls_none_tcp/ms_flow_ids.txt', 'r') as f_in:
+    with open(RUNS_PATH + '/ms_flow_ids.txt', 'r') as f_in:
         for line in f_in:
             tcp_results_id.append(int(line))
-    with open('temp/runs/starlink_550_isls_none_tcp/logs_ns3/traffic.csv', 'r') as f_in:
+    with open(RUNS_PATH + '/logs_ns3/traffic.csv', 'r') as f_in:
         count = 0
         for line in f_in:
             if count in tcp_results_id:
@@ -137,8 +145,8 @@ def build_edge_info():
     print("The number of traced traffic flow is", len(traffic_list))
     with open('edge_info.csv', 'a+') as f_out:
         count = 0
-        for i in range(number_of_gs):
-            for j in range(number_of_gs):
+        for i in range(NUM_GROUND_STATIONS):
+            for j in range(NUM_GROUND_STATIONS):
                 if i != j:
                     src = i + 72 * 22
                     dst = j + 72 * 22
@@ -151,9 +159,9 @@ def build_edge_info():
                             burst_size = traffic["burst_size"]
                             start_time = traffic["start_time"]
                             count += 1
-                    for k in range(simulation_time):
+                    for k in range(SIM_END_TIME_S):
                         sample_delay += str(delay)
-                        if k != simulation_time - 1:
+                        if k != SIM_END_TIME_S - 1:
                             sample_delay+=','
                     f_out.write("%s,%s,%s,%s,%s\n" % (
                         str(src),
@@ -164,6 +172,7 @@ def build_edge_info():
                         )
                     ) 
     print("The number of flows in edge_info.csv is", count)
+
 
 if __name__ == '__main__':
     build_label()   
