@@ -161,9 +161,12 @@ Step 1:
     python step_1_starlink_generation.py 5 1000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
 
 Step 2:
+    Change the number of TCP flows in the run.bash
+
+Step 3:
     Run the bash script
     nohup bash run.bash > run.log 2>&1 &
 
-Step 3:
+Step 4:
     compress dataset
     tar -zcvf dataset.tar.gz dataset
