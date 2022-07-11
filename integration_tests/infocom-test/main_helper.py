@@ -68,10 +68,10 @@ class MainHelper:
     ):
 
         # Add base name to setting
-        name = self.BASE_NAME + "_" + isl_selection + "_" + gs_selection + "_" + dynamic_state_algorithm
+        # name = self.BASE_NAME + "_" + isl_selection + "_" + gs_selection + "_" + dynamic_state_algorithm
 
-        # For convenient, we use the same gs selection name
-        name = self.BASE_NAME + "_" + isl_selection + "_" + 'ground_stations_top_100' + "_" + dynamic_state_algorithm
+        # Use a consistent output directory name for convenient
+        name = self.BASE_NAME + "_" + isl_selection + "_infocom_test"
 
         # Create output directories
         if not os.path.isdir(output_generated_data_dir):
@@ -172,5 +172,6 @@ class MainHelper:
             self.MAX_GSL_LENGTH_M,
             self.MAX_ISL_LENGTH_M,
             dynamic_state_algorithm,
-            True
+            True,
+            is_infocom_test=True,
         )

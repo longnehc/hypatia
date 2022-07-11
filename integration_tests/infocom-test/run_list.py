@@ -30,11 +30,14 @@ isl_utilization_tracking_interval_ns = 1 * 1000 * 1000 * 1000   # 1 second utili
 # Derivatives
 dynamic_state_update_interval_ns = dynamic_state_update_interval_ms * 1000 * 1000
 simulation_end_time_ns = simulation_end_time_s * 1000 * 1000 * 1000
-dynamic_state = "dynamic_state_" + str(dynamic_state_update_interval_ms) + "ms_for_" + str(simulation_end_time_s) + "s"
+# dynamic_state = "dynamic_state_" + str(dynamic_state_update_interval_ms) + "ms_for_" + str(simulation_end_time_s) + "s"
+
+# Use the fixed output directory name
+dynamic_state = "dynamic_state_infocom_test"
 
 # Chosen pairs:
 # > Manila (17) to Dalian (18)
-full_satellite_network_isls = "starlink_550_isls_none_ground_stations_top_100_algorithm_free_one_only_gs_relays" 
+full_satellite_network_isls = "starlink_550_isls_none_infocom_test"
 #full_satellite_network_isls="starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls"
 chosen_pairs = [
     ("starlink_550_isls_none", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
