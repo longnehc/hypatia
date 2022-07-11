@@ -84,7 +84,7 @@ for run in get_tcp_run_list():
     ms_flow_endpoints, ms_flow_ids = generate_tcp_schedule(
         start_id=num_sats,
         end_id=num_sats + num_gs - 1,
-        duration_seconds=1,
+        duration_seconds=int(run['simulation_end_time_ns'] / 1000 / 1000 / 1000),
         n_ms_flows=100,
         n_bg_flows=200,
         is_unique=True,

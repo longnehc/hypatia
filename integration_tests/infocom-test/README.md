@@ -116,5 +116,16 @@ You can look up a Starlink satellite by name on this website, which shows the ba
 
 
 ===========
-generate dataset
-nohup bash run.bash > run.log 2>&1 &
+
+# Generate Dataset for Infocom-Test
+
+Step 1:
+    Run step_1_starlink_generation.py to generate forwarding states
+    python step_1_starlink_generation.py 5 1000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
+
+Step 2:
+    Run the bash script
+    nohup bash run.bash > run.log 2>&1 &
+
+Step 3:
+    Collect the data from the dataset folder

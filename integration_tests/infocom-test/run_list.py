@@ -20,9 +20,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+from util import util
+
+full_satellite_network_isls = "starlink_550_isls_none_infocom_test"
+description_file_path = "temp/gen_data/" + full_satellite_network_isls + "/description.txt"
+
 # Core values
-dynamic_state_update_interval_ms = 1000                         # 100 millisecond update interval
-simulation_end_time_s = 5                                     # 200 seconds
+dynamic_state_update_interval_ms = int(util.get_config_value(description_file_path, 'simulation_interval_ms'))
+simulation_end_time_s = int(util.get_config_value(description_file_path, 'simulation_end_time_s'))
 pingmesh_interval_ns = 1 * 1000 * 1000                          # A ping every 1ms
 enable_isl_utilization_tracking = True                          # Enable utilization tracking
 isl_utilization_tracking_interval_ns = 1 * 1000 * 1000 * 1000   # 1 second utilization intervals
@@ -37,7 +42,6 @@ dynamic_state = "dynamic_state_infocom_test"
 
 # Chosen pairs:
 # > Manila (17) to Dalian (18)
-full_satellite_network_isls = "starlink_550_isls_none_infocom_test"
 #full_satellite_network_isls="starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls"
 chosen_pairs = [
     ("starlink_550_isls_none", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 

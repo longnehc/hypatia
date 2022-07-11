@@ -138,6 +138,12 @@ class MainHelper:
             self.MAX_ISL_LENGTH_M
         )
 
+        # For Infocm-test, add gs information, simulation length and interval to description
+        with open(output_generated_data_dir + "/" + name + "/description.txt", 'a') as f:
+            f.write('gs_selection={}\n'.format(gs_selection))
+            f.write('simulation_end_time_s={}\n'.format(duration_s))
+            f.write('simulation_interval_ms={}\n'.format(time_step_ms))
+
         # GSL interfaces
         ground_stations = satgen.read_ground_stations_extended(
             output_generated_data_dir + "/" + name + "/ground_stations.txt"
