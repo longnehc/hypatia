@@ -68,7 +68,10 @@ class MainHelper:
     ):
 
         # Add base name to setting
-        name = self.BASE_NAME + "_" + isl_selection + "_" + gs_selection + "_" + dynamic_state_algorithm
+        # name = self.BASE_NAME + "_" + isl_selection + "_" + gs_selection + "_" + dynamic_state_algorithm
+
+        # Use a consistent output directory name for convenient
+        name = self.BASE_NAME + "_" + isl_selection + "_infocom_test"
 
         # Create output directories
         if not os.path.isdir(output_generated_data_dir):
@@ -80,7 +83,12 @@ class MainHelper:
         print("Generating ground stations...")
         if gs_selection == "ground_stations_top_100":
             satgen.extend_ground_stations(
-                "input_data/ground_stations_paris_moscow_grid.basic.txt",
+                "input_data/ground_stations_cities_sorted_by_estimated_2025_pop_top_100.basic.txt",
+                output_generated_data_dir + "/" + name + "/ground_stations.txt"
+            )
+        elif gs_selection == "ground_stations_top_1000":
+            satgen.extend_ground_stations(
+                "input_data/ground_stations_cities_sorted_by_estimated_2025_pop_top_1000.basic.txt",
                 output_generated_data_dir + "/" + name + "/ground_stations.txt"
             )
         elif gs_selection == "ground_stations_paris_moscow_grid":
@@ -130,6 +138,12 @@ class MainHelper:
             self.MAX_ISL_LENGTH_M
         )
 
+        # For Infocm-test, add gs information, simulation length and interval to description
+        with open(output_generated_data_dir + "/" + name + "/description.txt", 'a') as f:
+            f.write('gs_selection={}\n'.format(gs_selection))
+            f.write('simulation_end_time_s={}\n'.format(duration_s))
+            f.write('simulation_interval_ms={}\n'.format(time_step_ms))
+
         # GSL interfaces
         ground_stations = satgen.read_ground_stations_extended(
             output_generated_data_dir + "/" + name + "/ground_stations.txt"
@@ -164,5 +178,6 @@ class MainHelper:
             self.MAX_GSL_LENGTH_M,
             self.MAX_ISL_LENGTH_M,
             dynamic_state_algorithm,
-            True
+            True,
+            is_infocom_test=True,
         )

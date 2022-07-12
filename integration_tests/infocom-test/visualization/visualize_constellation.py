@@ -6,7 +6,7 @@ import os
 
 topFile = "static_html/top.html"
 bottomFile = "static_html/bottom.html"
-OUT_HTML_FILE = "tles_visualization.html"
+OUT_HTML_FILE = "constellation_visualization.html"
 
 
 def load_satellites_from_tles(tles_filepath, epoch):
@@ -36,7 +36,36 @@ def load_satellites_from_tles(tles_filepath, epoch):
     return satellites
 
 
-def get_viz_string(satellites):
+def load_ground_stations(filepath):
+    list_gs = []
+    with open(filepath, 'r') as f:
+        for line in f:
+            line = line.split(',')
+            lat = line[2]
+            lon = line[3]
+            list_gs.append(
+                {
+                    'lat': float(lat),
+                    'lon': float(lon),
+                    'alt_km': 0,
+                }
+            )
+    return list_gs
+
+
+def get_gs_viz_string(list_gs):
+    viz_string = ""
+    for gs in list_gs:
+        viz_string += "var redSphere = viewer.entities.add({name : '', position: Cesium.Cartesian3.fromDegrees(" \
+                      + str(gs["lon"]) + ", " \
+                      + str(gs["lat"]) + ", " \
+                      + str(gs["alt_km"] * 1000) + "), " \
+                      + "ellipsoid : {radii : new Cesium.Cartesian3(30000.0, 30000.0, 30000.0), " \
+                      + "material : Cesium.Color.RED.withAlpha(1),}});\n"
+    return viz_string
+
+
+def get_sat_viz_string(satellites):
     viz_string = ""
     for j in range(len(satellites)):
         viz_string += "var redSphere = viewer.entities.add({name : '', position: Cesium.Cartesian3.fromDegrees(" \
@@ -66,7 +95,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Visualize the given TLEs constellation.')
     parser.add_argument('--tle', action="store",
                         help="The file path for the TLE file.",
+                        default='../temp/gen_data/'
+                                'starlink_550_isls_none_ground_stations_top_100_algorithm_free_one_only_gs_relays/'
+                                'tles.txt',
                         dest="tle", type=str)
+    parser.add_argument('--gs', action="store",
+                        help="The file path for the ground station file.",
+                        default='../temp/gen_data/'
+                                'starlink_550_isls_none_ground_stations_top_100_algorithm_free_one_only_gs_relays/'
+                                'ground_stations.txt',
+                        dest="gs", type=str)
     parser.add_argument('--epoch', action="store",
                         help="Optional. E.g., 2022-06-21 01:20:00, the datetime for the TLEs to visualize. "
                              + "The default value is the next day 00:00:00 of the first satellite's epoch.",
@@ -74,5 +112,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     _satellites = load_satellites_from_tles(args.tle, args.epoch)
-    _viz_string = get_viz_string(_satellites)
-    write_viz_files(_viz_string)
+    _list_gs = load_ground_stations(args.gs)
+    _sat_viz_string = get_sat_viz_string(_satellites)
+    _gs_viz_string = get_gs_viz_string(_list_gs)
+    write_viz_files(_sat_viz_string + _gs_viz_string)
