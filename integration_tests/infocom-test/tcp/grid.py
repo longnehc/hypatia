@@ -1,3 +1,6 @@
+import numpy as np
+
+
 """
 This SATELLITE_USERS_GRID grid adapts the same setting from
 @ARTICLE{7572177,
@@ -65,3 +68,7 @@ def get_lat_lon_range(row, col):
     lon_range = sorted((lon_start, lon_end))
 
     return lat_range, lon_range
+
+
+def get_total_satellite_users():
+    return np.array(SATELLITE_USERS_GRID).sum()
