@@ -70,14 +70,13 @@ logging location:
         topology->GetGSLDelay();
 
 ===========
-TLEs Visualization
 
-Convert the supplemental TLEsto Hypatia's format using convert_to_hypatia_tles.py
+Constellation Visualization
 
 In the visualization folder, run the script
-    python visualize_tles.py --tle ../tles.txt
+    python visualize_constellation.py
 
-Open tles_visualization.html in the same folder to see the visualization
+Open constellation_visualization.html in the same folder to see the visualization
 
 ===========
 
@@ -123,6 +122,46 @@ This is an online TLE parser where you can paste the TLE directly to retrieve th
 https://orbit.ing-now.com/satellite/74171/2022-062ba/starlink-4171/
 
 You can look up a Starlink satellite by name on this website, which shows the basic orbital information about the satellite, and an animation of the orbit on the map. 
+===========
+dataset format
+gsl_delay.csv
+[src_id, dst_id, gsl_delay_0, gsl_delay_1, ...]
+
+gsl_delay_queue_length.csv
+[device_id, interface_queue_length_0, interface_queue_length_1, ...]
+
+ping-results.csv
+[src_id, dst_id, min_rtt, avg_rtt, max_rtt]
+
+tcp-results.csv
+[src_id, dst_id, flow_completion_time_in_seconds, avg_rate]
+ 
+ traffic.csv
+[src_id, dst_id, burst_size, start_time] 
+
+
+node_info.csv
+[device_id, interface_queue_length_0, interface_queue_length_1, ..., latitude, longtitude]
+if devide is satellite 
+   latitude = 0, longtitude = 9
+else:
+   latitude = ground station latitude
+   longtitude = ground station longtitude
+
+edge_info.csv
+[src_id, dst_id, gsl_delay_0, gsl_delay_1, ..., burst_size, start_time]
+if edge is gsl:
+   burst_size = 0, start_time =0
+else:
+   delay = 10
+   burst_size = tcp burst size
+   start time = tcp start time
+   
+label.csv
+[src_id, dst_id, flow_completion_time_in_seconds, avg_rate, min_rtt, avg_rtt, max_rtt]
+
+ 
+===========
 
 ### Supplemental TLEs
 
@@ -130,6 +169,19 @@ https://celestrak.org/NORAD/elements/supplemental/
 
 You can find the latest supplemental TLEs for different constellations here.
 
-### Generate Dataset
+# Generate Dataset for Infocom-Test
 
-nohup bash run.bash > run.log 2>&1 &
+Step 1:
+    Run step_1_starlink_generation.py to generate forwarding states
+    python step_1_starlink_generation.py 5 1000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
+
+Step 2:
+    Change the number of TCP flows in the run.bash
+
+Step 3:
+    Run the bash script
+    nohup bash run.bash > run.log 2>&1 &
+
+Step 4:
+    compress dataset
+    tar -zcvf dataset.tar.gz dataset

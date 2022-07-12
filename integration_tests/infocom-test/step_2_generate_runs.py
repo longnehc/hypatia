@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import argparse
 import exputil
 import random
 from generate_tcp_schedule import generate_tcp_schedule
@@ -78,15 +79,20 @@ for run in get_tcp_run_list():
                                           "[TCP-SOCKET-TYPE]", str(run["tcp_socket_type"]))
 
     # Generate TCP flows
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--n_ms_flows', action="store", dest="n_ms_flows", type=int, default=100)
+    parser.add_argument('--n_bg_flows', action="store", dest="n_bg_flows", type=int, default=200)
+    args = parser.parse_args()
+
     gen_data_dir = "temp/gen_data/" + run['satellite_network']
     num_sats = util.count_sat_in_tles(gen_data_dir + "/tles.txt")
     num_gs = util.count_gs_in_file(gen_data_dir + '/ground_stations.txt')
     ms_flow_endpoints, ms_flow_ids = generate_tcp_schedule(
         start_id=num_sats,
         end_id=num_sats + num_gs - 1,
-        duration_seconds=1,
-        n_ms_flows=100,
-        n_bg_flows=200,
+        duration_seconds=int(run['simulation_end_time_ns'] / 1000 / 1000 / 1000),
+        n_ms_flows=args.n_ms_flows,
+        n_bg_flows=args.n_bg_flows,
         is_unique=True,
     )
 

@@ -74,12 +74,17 @@ def worker(args):
 def help_dynamic_state(
         output_generated_data_dir, num_threads, name, time_step_ms, duration_s,
         max_gsl_length_m, max_isl_length_m, dynamic_state_algorithm, print_logs,
-        feature_enable=None,
+        feature_enable=None, is_infocom_test=False,
 ):
 
     # Directory
     output_dynamic_state_dir = output_generated_data_dir + "/" + name + "/dynamic_state_" + str(time_step_ms) \
                                + "ms_for_" + str(duration_s) + "s"
+
+    # Use the fixed output directory name for infocom-test
+    if is_infocom_test:
+        output_dynamic_state_dir = output_generated_data_dir + "/" + name + "/dynamic_state_infocom_test"
+
     if not os.path.isdir(output_dynamic_state_dir):
         os.makedirs(output_dynamic_state_dir)
 
