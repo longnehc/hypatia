@@ -1,4 +1,3 @@
-# https://github.com/snkas/networkload/blob/master/example/example.py
 import argparse
 import networkload
 import random
