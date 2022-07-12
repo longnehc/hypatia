@@ -32,8 +32,21 @@ def get_lat_lon_range(row, col):
     @param row: the row of the grid.
     @param col: the col of the grid.
     @return: the range of latitude and longitude for the given row and col.
+             (latitude_start, latitude_end), (longitude_start, longitude_end)
     """
     # These start values are based on our grid
-    lat_start_from_top = 90
-    lon_start_from_left = -180
-    pass
+    lat_on_first_row = 90
+    lon_on_first_col = -180
+    lat_increment = -15
+    lon_increment = 15
+
+    lat_start = lat_on_first_row + row * lat_increment
+    lat_end = lat_start + lat_increment
+    lon_start = lon_on_first_col + col * lon_increment
+    lon_end = lon_start + lon_increment
+
+    # Sort the range to have the smaller value on the left for convenience
+    lat_range = sorted((lat_start, lat_end))
+    lon_range = sorted((lon_start, lon_end))
+
+    return lat_range, lon_range
