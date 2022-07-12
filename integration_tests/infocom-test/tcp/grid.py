@@ -24,7 +24,22 @@ SATELLITE_USERS_GRID = [
 
 
 def build_grid():
-    pass
+    """
+    Build a grid of world, each grid position contains latitude, longitude
+    and satellite user information.
+    @return:
+    """
+    grid = []
+    for row in range(len(SATELLITE_USERS_GRID)):
+        grid.append([])
+        for col in range(len(SATELLITE_USERS_GRID[row])):
+            lat_range, lon_range = get_lat_lon_range(row, col)
+            grid[row].append({
+                'num_satellite_users': SATELLITE_USERS_GRID[row][col],
+                'lat_range': lat_range,
+                'lon_range': lon_range,
+            })
+    return grid
 
 
 def get_lat_lon_range(row, col):
