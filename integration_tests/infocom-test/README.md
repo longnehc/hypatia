@@ -17,8 +17,7 @@ Expected outputs:
 
 Flow generation in step 2:
     TCP:
-        step 2.1: generate TCP flows：
-        python generate_tcp_schedule.py --start_id 1584 --end_id 1650 --duration_s 5 --expected_flows_per_s 10 -n 100
+        python tcp/generate_tcp_schedule.py --start_id 1600 --end_id 1650 --duration_s 10 --n_ms_flows 100 --n_bg_flows 1000 --is_unique True
 
     PING:
         TODO

@@ -1,3 +1,4 @@
+# https://github.com/snkas/networkload/blob/master/example/example.py
 import argparse
 import exputil
 import networkload
@@ -5,21 +6,10 @@ import random
 import numpy as np
 
 
-try:
-    from .run_list import *
-except (ImportError, SystemError):
-    from run_list import *
-
-
-# Set up random seeds
-# random.seed(123456789)
 SEED_START_TIMES = random.randint(0, 100000000)
 SEED_FROM_TO = random.randint(0, 100000000)
 SEED_FLOW_SIZE = random.randint(0, 100000000)
 local_shell = exputil.LocalShell()
-
-
-# https://github.com/snkas/networkload/blob/master/example/example.py
 
 
 def generate_tcp_schedule(
@@ -29,6 +19,7 @@ def generate_tcp_schedule(
         n_ms_flows,
         n_bg_flows,
         is_unique,
+        output_dir='.',
 ):
     """
     @param start_id: the first id of the end-point id range
@@ -37,6 +28,7 @@ def generate_tcp_schedule(
     @param n_ms_flows: number of measurement flows that we want to log during simulation.
     @param n_bg_flows: number of background flows to simulate congestion, and we do not want to log them.
     @param is_unique: indicate whether of the measurement flows have unique end-point pairs.
+    @param output_dir: the path to store the generated TCP schedule.
     @return: end-point pairs and flow ids for the measurement flows
     """
     servers = set(range(start_id, end_id + 1))
@@ -54,7 +46,6 @@ def generate_tcp_schedule(
         if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
             raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
 
-    output_dir = "temp/runs/" + get_tcp_run_list()[0]["name"]
     tcp_schedule_filename = output_dir + "/schedule.csv"
     write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, tcp_schedule_filename)
 

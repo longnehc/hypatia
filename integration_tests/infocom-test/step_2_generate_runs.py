@@ -23,7 +23,7 @@
 import argparse
 import exputil
 import random
-from generate_tcp_schedule import generate_tcp_schedule
+from tcp import generate_tcp_schedule
 from util import util
 
 
@@ -94,6 +94,7 @@ for run in get_tcp_run_list():
         n_ms_flows=args.n_ms_flows,
         n_bg_flows=args.n_bg_flows,
         is_unique=True,
+        output_dir="temp/runs/" + get_tcp_run_list()[0]["name"]
     )
 
     # enable ping and tcp run at the same time
