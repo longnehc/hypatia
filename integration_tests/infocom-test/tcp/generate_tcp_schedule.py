@@ -1,7 +1,7 @@
 import argparse
 import networkload
-import random
 import numpy as np
+import random
 
 
 SEED_START_TIMES = random.randint(0, 100000000)
