@@ -1,6 +1,5 @@
 # https://github.com/snkas/networkload/blob/master/example/example.py
 import argparse
-import exputil
 import networkload
 import random
 import numpy as np
@@ -9,7 +8,6 @@ import numpy as np
 SEED_START_TIMES = random.randint(0, 100000000)
 SEED_FROM_TO = random.randint(0, 100000000)
 SEED_FLOW_SIZE = random.randint(0, 100000000)
-local_shell = exputil.LocalShell()
 
 
 def generate_tcp_schedule(
