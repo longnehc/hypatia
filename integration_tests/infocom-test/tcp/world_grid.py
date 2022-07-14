@@ -27,7 +27,7 @@ SATELLITE_USERS_GRID = [
 ]
 
 
-class Grid:
+class WorldGrid:
     def __init__(self, users_grid):
         self.users_grid = users_grid
         self.__build_grid()
