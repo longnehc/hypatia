@@ -44,17 +44,7 @@ def generate_tcp_schedule(
         make_endpoint_pair_unique(servers, list_from_to, ms_flow_ids)
     ms_flow_endpoints = get_ms_flow_endpoints(list_from_to, ms_flow_ids)
 
-    world_grid: WorldGrid = get_world_grid()
-
-    destinations = world_grid.random_select_grid_position(n_bg_flows)
-    add_closest_gs(destinations, gs_path)
-
-    datacenters = get_datacenters()
-    add_closest_gs(datacenters, gs_path)
-    chosen_dc = random_choose_dc(datacenters, destinations)
-
-    bg_end_point_pairs = get_endpoint_pairs(chosen_dc, destinations, start_id)
-    list_from_to = replace_bg_end_point_pairs(list_from_to, bg_end_point_pairs, ms_flow_ids)
+    list_from_to = generate_bg_flows_by_user_distribution(list_from_to, n_bg_flows, gs_path, ms_flow_ids, start_id)
 
     for i in range(len(ms_flow_ids)):
         if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
@@ -126,6 +116,22 @@ def generate_flow_size_in_byte(num_starts):
             num_starts, networkload.CDF_PFABRIC_WEB_SEARCH_BYTE, True, SEED_FLOW_SIZE)
     )
     return list_flow_size_byte
+
+
+def generate_bg_flows_by_user_distribution(list_from_to, n_bg_flows, gs_path, ms_flow_ids, start_id):
+    world_grid: WorldGrid = get_world_grid()
+
+    destinations = world_grid.random_select_grid_position(n_bg_flows)
+    add_closest_gs(destinations, gs_path)
+
+    datacenters = get_datacenters()
+    add_closest_gs(datacenters, gs_path)
+    chosen_dc = random_choose_dc(datacenters, destinations)
+
+    bg_end_point_pairs = get_endpoint_pairs(chosen_dc, destinations, start_id)
+    list_from_to = replace_bg_end_point_pairs(list_from_to, bg_end_point_pairs, ms_flow_ids)
+
+    return list_from_to
 
 
 def write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, output_filename):
