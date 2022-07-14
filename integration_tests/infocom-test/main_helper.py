@@ -143,6 +143,8 @@ class MainHelper:
             f.write('gs_selection={}\n'.format(gs_selection))
             f.write('simulation_end_time_s={}\n'.format(duration_s))
             f.write('simulation_interval_ms={}\n'.format(time_step_ms))
+            f.write('num_orbits={}\n'.format(self.NUM_ORBS))
+            f.write('num_satellites_per_orbit={}\n'.format(self.NUM_SATS_PER_ORB))
 
         # GSL interfaces
         ground_stations = satgen.read_ground_stations_extended(
