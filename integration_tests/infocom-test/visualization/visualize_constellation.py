@@ -96,13 +96,13 @@ if __name__ == "__main__":
     parser.add_argument('--tle', action="store",
                         help="The file path for the TLE file.",
                         default='../temp/gen_data/'
-                                'starlink_550_isls_none_ground_stations_top_100_algorithm_free_one_only_gs_relays/'
+                                'starlink_550_isls_none_infocom_test/'
                                 'tles.txt',
                         dest="tle", type=str)
     parser.add_argument('--gs', action="store",
                         help="The file path for the ground station file.",
                         default='../temp/gen_data/'
-                                'starlink_550_isls_none_ground_stations_top_100_algorithm_free_one_only_gs_relays/'
+                                'starlink_550_isls_none_infocom_test/'
                                 'ground_stations.txt',
                         dest="gs", type=str)
     parser.add_argument('--epoch', action="store",
