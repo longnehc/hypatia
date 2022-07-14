@@ -26,49 +26,53 @@ SATELLITE_USERS_GRID = [
 ]
 
 
-def build_grid():
-    """
-    Build a grid of world, each grid position contains latitude, longitude
-    and satellite user information.
-    @return:
-    """
-    grid = []
-    for row in range(len(SATELLITE_USERS_GRID)):
-        grid.append([])
-        for col in range(len(SATELLITE_USERS_GRID[row])):
-            lat_range, lon_range = get_lat_lon_range(row, col)
-            grid[row].append({
-                'num_satellite_users': SATELLITE_USERS_GRID[row][col],
-                'lat_range': lat_range,
-                'lon_range': lon_range,
-            })
-    return grid
+class Grid:
+    def __init__(self):
+        self.grid = None
+        self.__build_grid()
+        self.total_satellite_users = self.__get_total_satellite_users()
 
+    def __build_grid(self):
+        """
+        Build a grid of world, each grid position contains latitude, longitude
+        and satellite user information.
+        @return:
+        """
+        self.grid = []
+        for row in range(len(SATELLITE_USERS_GRID)):
+            self.grid.append([])
+            for col in range(len(SATELLITE_USERS_GRID[row])):
+                lat_range, lon_range = self.__get_lat_lon_range(row, col)
+                self.grid[row].append({
+                    'num_satellite_users': SATELLITE_USERS_GRID[row][col],
+                    'lat_range': lat_range,
+                    'lon_range': lon_range,
+                })
 
-def get_lat_lon_range(row, col):
-    """
-    @param row: the row of the grid.
-    @param col: the col of the grid.
-    @return: the range of latitude and longitude for the given row and col.
-             (latitude_start, latitude_end), (longitude_start, longitude_end)
-    """
-    # These start values are based on our grid
-    lat_on_first_row = 90
-    lon_on_first_col = -180
-    lat_increment = -15
-    lon_increment = 15
+    @staticmethod
+    def __get_lat_lon_range(row, col):
+        """
+        @param row: the row of the grid.
+        @param col: the col of the grid.
+        @return: the range of latitude and longitude for the given row and col.
+                 (latitude_start, latitude_end), (longitude_start, longitude_end)
+        """
+        # These start values are based on our grid
+        lat_on_first_row = 90
+        lon_on_first_col = -180
+        lat_increment = -15
+        lon_increment = 15
 
-    lat_start = lat_on_first_row + row * lat_increment
-    lat_end = lat_start + lat_increment
-    lon_start = lon_on_first_col + col * lon_increment
-    lon_end = lon_start + lon_increment
+        lat_start = lat_on_first_row + row * lat_increment
+        lat_end = lat_start + lat_increment
+        lon_start = lon_on_first_col + col * lon_increment
+        lon_end = lon_start + lon_increment
 
-    # Sort the range to have the smaller value on the left for convenience
-    lat_range = sorted((lat_start, lat_end))
-    lon_range = sorted((lon_start, lon_end))
+        # Sort the range to have the smaller value on the left for convenience
+        lat_range = sorted((lat_start, lat_end))
+        lon_range = sorted((lon_start, lon_end))
 
-    return lat_range, lon_range
+        return lat_range, lon_range
 
-
-def get_total_satellite_users():
-    return np.array(SATELLITE_USERS_GRID).sum()
+    def __get_total_satellite_users(self):
+        return np.array(self.grid).sum()
