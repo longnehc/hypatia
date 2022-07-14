@@ -1,4 +1,5 @@
 import numpy as np
+import random
 
 
 """
@@ -27,10 +28,9 @@ SATELLITE_USERS_GRID = [
 
 
 class Grid:
-    def __init__(self):
-        self.grid = None
+    def __init__(self, users_grid):
+        self.users_grid = users_grid
         self.__build_grid()
-        self.total_satellite_users = self.__get_total_satellite_users()
 
     def __build_grid(self):
         """
@@ -38,16 +38,23 @@ class Grid:
         and satellite user information.
         @return:
         """
-        self.grid = []
-        for row in range(len(SATELLITE_USERS_GRID)):
-            self.grid.append([])
-            for col in range(len(SATELLITE_USERS_GRID[row])):
+        self.grid_1d = []
+        self.grid_2d = []
+        self.grid_1d_weights = []
+        self.total_satellite_users = self.__get_total_satellite_users()
+        for row in range(len(self.users_grid)):
+            self.grid_2d.append([])
+            for col in range(len(self.users_grid[row])):
                 lat_range, lon_range = self.__get_lat_lon_range(row, col)
-                self.grid[row].append({
-                    'num_satellite_users': SATELLITE_USERS_GRID[row][col],
+                grid_position = {
+                    'num_satellite_users': self.users_grid[row][col],
                     'lat_range': lat_range,
                     'lon_range': lon_range,
-                })
+                    'weights': self.users_grid[row][col] / self.total_satellite_users,
+                }
+                self.grid_2d[row].append(grid_position)
+                self.grid_1d.append(grid_position)
+                self.grid_1d_weights.append(grid_position['weights'])
 
     @staticmethod
     def __get_lat_lon_range(row, col):
@@ -75,4 +82,7 @@ class Grid:
         return lat_range, lon_range
 
     def __get_total_satellite_users(self):
-        return np.array(self.grid).sum()
+        return np.array(self.users_grid).sum()
+
+    def random_select_grid_position(self, n):
+        return random.choices(self.grid_1d, weights=self.grid_1d_weights, k=n)
