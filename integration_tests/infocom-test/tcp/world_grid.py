@@ -36,7 +36,6 @@ class WorldGrid:
         """
         Build a grid of world, each grid position contains latitude, longitude
         and satellite user information.
-        @return:
         """
         self.grid_1d = []
         self.grid_2d = []
@@ -50,6 +49,8 @@ class WorldGrid:
                     'num_satellite_users': self.users_grid[row][col],
                     'lat_range': lat_range,
                     'lon_range': lon_range,
+                    'latitude': (lat_range[1] + lat_range[0]) / 2,
+                    'longitude': (lon_range[1] + lon_range[0]) / 2,
                     'weights': self.users_grid[row][col] / self.total_satellite_users,
                 }
                 self.grid_2d[row].append(grid_position)
@@ -86,3 +87,11 @@ class WorldGrid:
 
     def random_select_grid_position(self, n):
         return random.choices(self.grid_1d, weights=self.grid_1d_weights, k=n)
+
+
+def get_world_grid():
+    """
+    Initialize a world grid class and return it.
+    @return: a WorldGrid object
+    """
+    return WorldGrid(SATELLITE_USERS_GRID)

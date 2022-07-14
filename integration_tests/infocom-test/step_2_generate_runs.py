@@ -95,6 +95,7 @@ for run in get_tcp_run_list():
         n_bg_flows=args.n_bg_flows,
         is_unique=True,
         output_dir="temp/runs/" + get_tcp_run_list()[0]["name"],
+        gs_path=gen_data_dir + "/ground_stations.txt",
     )
 
     # enable ping and tcp run at the same time

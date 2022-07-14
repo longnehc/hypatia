@@ -2,6 +2,9 @@ import argparse
 import networkload
 import numpy as np
 import random
+from .world_grid import WorldGrid, get_world_grid
+from .datacenter import get_datacenters, random_choose_dc
+from .helper import add_closest_gs, get_endpoint_pairs, replace_bg_end_point_pairs
 
 
 SEED_START_TIMES = random.randint(0, 100000000)
@@ -17,6 +20,7 @@ def generate_tcp_schedule(
         n_bg_flows,
         is_unique,
         output_dir='.',
+        gs_path='.',
 ):
     """
     @param start_id: the first id of the end-point id range
@@ -26,6 +30,7 @@ def generate_tcp_schedule(
     @param n_bg_flows: number of background flows to simulate congestion, and we do not want to log them.
     @param is_unique: indicate whether of the measurement flows have unique end-point pairs.
     @param output_dir: the path to store the generated TCP schedule.
+    @param gs_path: the path to ground_stations.txt
     @return: end-point pairs and flow ids for the measurement flows
     """
     servers = set(range(start_id, end_id + 1))
@@ -38,6 +43,18 @@ def generate_tcp_schedule(
     if is_unique:
         make_endpoint_pair_unique(servers, list_from_to, ms_flow_ids)
     ms_flow_endpoints = get_ms_flow_endpoints(list_from_to, ms_flow_ids)
+
+    world_grid: WorldGrid = get_world_grid()
+
+    destinations = world_grid.random_select_grid_position(n_bg_flows)
+    add_closest_gs(destinations, gs_path)
+
+    datacenters = get_datacenters()
+    add_closest_gs(datacenters, gs_path)
+    chosen_dc = random_choose_dc(datacenters, destinations)
+
+    bg_end_point_pairs = get_endpoint_pairs(chosen_dc, destinations, start_id)
+    list_from_to = replace_bg_end_point_pairs(list_from_to, bg_end_point_pairs, ms_flow_ids)
 
     for i in range(len(ms_flow_ids)):
         if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:

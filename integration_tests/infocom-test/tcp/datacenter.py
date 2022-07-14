@@ -1,3 +1,5 @@
+import random
+
 from geopy import distance
 
 
@@ -52,53 +54,42 @@ def get_datacenters():
     return DATACENTERS
 
 
-def find_closest_gs(datacenters, gs_filepath):
+def random_choose_dc(datacenters, destinations):
+    chosen_dc = []
+    for i in range(len(destinations)):
+        dc = random_choose_dc_by_distance(datacenters, destinations[i])
+        chosen_dc.append(dc)
+    return chosen_dc
+
+
+def random_choose_dc_by_distance(datacenters, destination):
     """
-    Find the closest ground station to the given datacenter.
-    @param datacenters: a list of datacenters
-    @param gs_filepath: the file path of the ground_stations.txt
-    @return: list of datacenters with the closest ground station in
-             their attribute
+    @param datacenters: a list of datacenters to choose from
+    @param destination:
+    @param gs_for_dest: the ground station for the destination.
+                        The closest ground station to the chosen datacenter
+                        cannot be the same as the ground station for the
+                        destination.
+    @return: a chosen datacenter as the traffic source
     """
-    ground_stations = read_gs_file(gs_filepath)
+    # Remove the datacenter that has the same closest gs as the destination
     for dc in datacenters:
-        closest_gs = find_closest_gs_for(dc, ground_stations)
-        dc['closest_gs'] = closest_gs
-    return datacenters
+        if dc['closest_gs']['id'] == destination['closest_gs']['id']:
+            datacenters.remove(dc)
 
-
-def find_closest_gs_for(datacenter, ground_stations):
-    """
-    @param datacenter: a datacenter
-    @param ground_stations: a ground station
-    @return: the closest ground station to the datacenter
-    """
-    min_distance = float('inf')
-    closest_gs = ground_stations[0]
-    for gs in ground_stations:
+    total_distance = 0
+    dc_distance = []
+    for dc in datacenters:
         _distance = distance.distance(
-            (datacenter['latitude'], datacenter['longitude']),
-            (gs['latitude'], gs['longitude'])
+            (destination['latitude'], destination['longitude']),
+            (dc['latitude'], dc['longitude'])
         )
-        if _distance < min_distance:
-            min_distance = _distance
-            closest_gs = gs
-    return closest_gs
+        dc_distance.append(_distance.km)
+        total_distance += _distance.km
 
+    dc_weights = []
+    for dist in dc_distance:
+        dc_weights.append(dist / total_distance)
 
-def read_gs_file(gs_file_path):
-    """
-    @param gs_file_path: the path of the ground_stations.txt
-    @return: a list of ground stations
-    """
-    ground_stations = []
-    with open(gs_file_path, 'r') as f:
-        for line in f:
-            gs = {}
-            split = line.split(',')
-            gs['id'] = split[0]
-            gs['location'] = split[1]
-            gs['latitude'] = float(split[2])
-            gs['longitude'] = float(split[3])
-            ground_stations.append(gs)
-    return ground_stations
+    chosen_dc = random.choices(datacenters, weights=dc_weights, k=1)[0]
+    return chosen_dc
