@@ -2,16 +2,15 @@ import folium
 
 
 def draw_end_point_pairs_on_map(tcp_flows, ground_stations, description):
-    # Make an empty map
-    m = folium.Map(location=[20,0], tiles="OpenStreetMap", zoom_start=2)
     start_id = int(description['num_orbits']) * int(description['num_satellites_per_orbit'])
-
-    # Count the frequency of each end points
     source_counts, dest_counts = count_end_points(tcp_flows)
+    draw_end_points(tcp_flows, ground_stations, dest_counts, start_id, 'destination_map.html', 'red', 500)
+    draw_end_points(tcp_flows, ground_stations, source_counts, start_id, 'source_map.html', 'green', 100)
 
-    # Draw circles on the map
-    base_circle_radius = 500
-    for gs_id, counts in dest_counts.items():
+
+def draw_end_points(tcp_flows, ground_stations, end_point_counts, start_id, filename, color, base_circle_radius=500):
+    m = folium.Map(location=[20,0], tiles="OpenStreetMap", zoom_start=2)
+    for gs_id, counts in end_point_counts.items():
         dest_gs = ground_stations[gs_id - start_id]
 
         # Add destination
@@ -19,14 +18,12 @@ def draw_end_point_pairs_on_map(tcp_flows, ground_stations, description):
             location=[dest_gs['latitude'], dest_gs['longitude']],
             popup='{}-{}'.format(dest_gs['id'], dest_gs['location']),
             radius=counts / len(tcp_flows) * base_circle_radius,
-            color='red',
+            color=color,
             fill=True,
         ).add_to(m)
-
     # Save the map
-    output_path = 'end_point_pairs_map.html'
-    m.save(output_path)
-    print('The map is saved as {}'.format(output_path))
+    m.save(filename)
+    print('The map is saved as {}'.format(filename))
 
 
 def count_end_points(tcp_flows):
