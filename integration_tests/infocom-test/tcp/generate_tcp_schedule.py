@@ -4,7 +4,7 @@ import numpy as np
 import random
 from .world_grid import WorldGrid, get_world_grid
 from .datacenter import get_datacenters, random_choose_dc
-from .helper import add_closest_gs, get_endpoint_pairs, replace_bg_end_point_pairs
+from .helper import add_closest_gs, get_endpoint_pairs, replace_bg_end_point_pairs, read_ep_pairs
 
 
 SEED_START_TIMES = random.randint(0, 100000000)
@@ -21,6 +21,7 @@ def generate_tcp_schedule(
         is_unique,
         output_dir='.',
         gs_path='.',
+        bg_ep_filepath=None,
 ):
     """
     @param start_id: the first id of the end-point id range
@@ -31,6 +32,7 @@ def generate_tcp_schedule(
     @param is_unique: indicate whether of the measurement flows have unique end-point pairs.
     @param output_dir: the path to store the generated TCP schedule.
     @param gs_path: the path to ground_stations.txt
+    @param bg_ep_filepath: the file path to the end-point pairs for background flows
     @return: end-point pairs and flow ids for the measurement flows
     """
     servers = set(range(start_id, end_id + 1))
@@ -44,7 +46,15 @@ def generate_tcp_schedule(
         make_endpoint_pair_unique(servers, list_from_to, ms_flow_ids)
     ms_flow_endpoints = get_ms_flow_endpoints(list_from_to, ms_flow_ids)
 
-    list_from_to = generate_bg_flows_by_user_distribution(list_from_to, n_bg_flows, gs_path, ms_flow_ids, start_id)
+    if bg_ep_filepath is None:
+        bg_end_point_pairs = generate_bg_flows_by_user_distribution(n_bg_flows, gs_path, start_id)
+    else:
+        bg_end_point_pairs_cache = read_ep_pairs(bg_ep_filepath)
+        bg_end_point_pairs = random.choices(bg_end_point_pairs_cache, k=n_bg_flows)
+        print("Select {} pairs out of {} pairs from the cached end point pairs at {}"
+              .format(n_bg_flows, len(bg_end_point_pairs_cache), bg_ep_filepath))
+
+    list_from_to = replace_bg_end_point_pairs(list_from_to, bg_end_point_pairs, ms_flow_ids)
 
     for i in range(len(ms_flow_ids)):
         if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
@@ -118,7 +128,7 @@ def generate_flow_size_in_byte(num_starts):
     return list_flow_size_byte
 
 
-def generate_bg_flows_by_user_distribution(list_from_to, n_bg_flows, gs_path, ms_flow_ids, start_id):
+def generate_bg_flows_by_user_distribution(n_bg_flows, gs_path, start_id):
     world_grid: WorldGrid = get_world_grid()
 
     destinations = world_grid.random_select_grid_position(n_bg_flows)
@@ -129,9 +139,8 @@ def generate_bg_flows_by_user_distribution(list_from_to, n_bg_flows, gs_path, ms
     chosen_dc = random_choose_dc(datacenters, destinations)
 
     bg_end_point_pairs = get_endpoint_pairs(chosen_dc, destinations, start_id)
-    list_from_to = replace_bg_end_point_pairs(list_from_to, bg_end_point_pairs, ms_flow_ids)
 
-    return list_from_to
+    return bg_end_point_pairs
 
 
 def write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, output_filename):

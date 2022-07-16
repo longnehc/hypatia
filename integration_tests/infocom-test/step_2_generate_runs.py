@@ -96,6 +96,7 @@ for run in get_tcp_run_list():
         is_unique=True,
         output_dir="temp/runs/" + get_tcp_run_list()[0]["name"],
         gs_path=gen_data_dir + "/ground_stations.txt",
+        bg_ep_filepath='./ep_pairs_cache.txt',
     )
 
     # enable ping and tcp run at the same time

@@ -33,3 +33,12 @@ def parse_properties_line(line):
     """
     key_value = line.strip().split('=')
     return key_value[0], key_value[1]  # key, value
+
+
+def read_config_file(filepath, separator):
+    config = {}
+    with open(filepath, 'r') as f:
+        for line in f:
+            split = line.strip().split(separator)
+            config[split[0]] = split[1]
+    return config

@@ -76,3 +76,14 @@ def replace_bg_end_point_pairs(list_from_to, bg_end_point_pair, ms_flow_ids):
         list_from_to[i] = bg_end_point_pair[bg_pair_counter]
         bg_pair_counter += 1
     return list_from_to
+
+
+def read_ep_pairs(filepath):
+    ep_pairs = []
+    with open(filepath, 'r') as f:
+        for line in f:
+            split = line.strip().split(',')
+            ep_pairs.append(
+                (int(split[0]), int(split[1]))
+            )
+    return ep_pairs
