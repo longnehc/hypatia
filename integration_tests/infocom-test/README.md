@@ -157,7 +157,7 @@ label.csv
 
 Step 1:
     Run step_1_starlink_generation.py to generate forwarding states
-    python step_1_starlink_generation.py 5 1000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
+    python step_1_starlink_generation.py 100 5000 isls_none ground_stations_top_100 algorithm_free_one_only_gs_relays 4
 
 Step 2:
     Change the number of TCP flows in the run.bash
