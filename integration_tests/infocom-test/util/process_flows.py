@@ -14,5 +14,5 @@ def count_successful_flows(filepath):
 
 if __name__ == '__main__':
     _counts = count_successful_flows(
-        'temp/runs/starlink_550_isls_none_tcp/logs_ns3/tcp_flows.csv'
+        '../temp/runs/starlink_550_isls_none_tcp/logs_ns3/tcp_flows.csv'
     )
