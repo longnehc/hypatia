@@ -21,7 +21,7 @@ def generate_tcp_schedule(
         is_unique,
         output_dir='.',
         gs_path='.',
-        bg_ep_filepath=None,
+        ep_filepath=None,
 ):
     """
     @param start_id: the first id of the end-point id range
@@ -38,7 +38,16 @@ def generate_tcp_schedule(
     servers = set(range(start_id, end_id + 1))
     list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
     num_starts = len(list_start_time_ns)
-    list_from_to = generate_from_to_list(num_starts, servers)
+
+    # If end-point pairs cache is provided, use the cache to generate list_from_to
+    if ep_filepath is not None:
+        end_point_pairs_cache = read_ep_pairs(ep_filepath)
+        list_from_to = random.choices(end_point_pairs_cache, k=n_ms_flows + n_bg_flows)
+        print("Select {} pairs out of {} pairs from the cached end point pairs at {}"
+              .format(n_ms_flows + n_bg_flows, len(end_point_pairs_cache), ep_filepath))
+    else:
+        list_from_to = generate_from_to_list(num_starts, servers)
+
     list_flow_size_byte = generate_flow_size_in_byte(num_starts)
 
     ms_flow_ids = random_pick_ms_flow_ids(list_from_to, n_ms_flows)
@@ -46,15 +55,11 @@ def generate_tcp_schedule(
         make_endpoint_pair_unique(servers, list_from_to, ms_flow_ids)
     ms_flow_endpoints = get_ms_flow_endpoints(list_from_to, ms_flow_ids)
 
-    if bg_ep_filepath is None:
+    # If the end-point pair cache is provided, the user distribution information
+    # is already in the cache the frequency of end-point pairs is preserved
+    if ep_filepath is None:
         bg_end_point_pairs = generate_bg_flows_by_user_distribution(n_bg_flows, gs_path, start_id)
-    else:
-        bg_end_point_pairs_cache = read_ep_pairs(bg_ep_filepath)
-        bg_end_point_pairs = random.choices(bg_end_point_pairs_cache, k=n_bg_flows)
-        print("Select {} pairs out of {} pairs from the cached end point pairs at {}"
-              .format(n_bg_flows, len(bg_end_point_pairs_cache), bg_ep_filepath))
-
-    list_from_to = replace_bg_end_point_pairs(list_from_to, bg_end_point_pairs, ms_flow_ids)
+        list_from_to = replace_bg_end_point_pairs(list_from_to, bg_end_point_pairs, ms_flow_ids)
 
     for i in range(len(ms_flow_ids)):
         if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
