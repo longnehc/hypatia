@@ -181,7 +181,7 @@ def is_end_of_file(name):
 
 
 if __name__ == '__main__':
-    filepath = 'starlink_sullplemental_tles.txt'
+    filepath = 'starlink_supplemental_tles.txt'
     satellite_groups = dict()  # Key: [altitude_km][inclination_deg][raan_deg]
     satellites = []
     with open(filepath, 'r') as f:
