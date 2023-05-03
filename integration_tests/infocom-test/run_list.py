@@ -22,7 +22,7 @@
 
 from util import util
 
-full_satellite_network_isls = "starlink_550_isls_none_infocom_test"
+full_satellite_network_isls = "starlink_550_isls_plus_grid_infocom_test"
 description_file_path = "temp/gen_data/" + full_satellite_network_isls + "/description.txt"
 
 # Core values
@@ -44,7 +44,7 @@ dynamic_state = "dynamic_state_infocom_test"
 # > Manila (17) to Dalian (18)
 #full_satellite_network_isls="starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls"
 chosen_pairs = [
-    ("starlink_550_isls_none", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
+    ("starlink_550_isls_plus_grid", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
 ]
 
 
