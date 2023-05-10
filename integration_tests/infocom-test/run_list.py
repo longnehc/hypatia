@@ -28,7 +28,7 @@ description_file_path = "temp/gen_data/" + full_satellite_network_isls + "/descr
 # Core values
 dynamic_state_update_interval_ms = int(util.get_config_value(description_file_path, 'simulation_interval_ms'))
 simulation_end_time_s = int(util.get_config_value(description_file_path, 'simulation_end_time_s'))
-pingmesh_interval_ns = 1 * 1000 * 1000                          # A ping every 1ms
+pingmesh_interval_ns = 100 * 1000 * 1000                          # A ping every 1ms
 enable_isl_utilization_tracking = True                          # Enable utilization tracking
 isl_utilization_tracking_interval_ns = 1 * 1000 * 1000 * 1000   # 1 second utilization intervals
 
@@ -43,10 +43,22 @@ dynamic_state = "dynamic_state_infocom_test"
 # Chosen pairs:
 # > Manila (17) to Dalian (18)
 #full_satellite_network_isls="starlink_550_isls_plus_grid_ground_stations_top_100_algorithm_free_one_only_over_isls"
-chosen_pairs = [
-    ("starlink_550_isls_plus_grid", 1600, 1610, "TcpNewReno", full_satellite_network_isls), 
-]
+scr_dst_pairs = [([100], [101]),
+                 ([100], [60]),
+                 ([100], [102]),
+                 ([100], [103]),
+                 ([100], [56]),
+                 ([100], [74]),
+                 ([100], [50]),
+                 ([100], [84]),
+                 ([100], [27]),
+                 ([100], [6]),
+                 ([100], [0])]
 
+chosen_pairs = []
+for sd in scr_dst_pairs:
+    chosen_pairs.append(("starlink_550_isls_plus_grid_{}_{}".format(sd[0][0], sd[1][0]), 
+                         sd[0], sd[1], "TcpNewReno", full_satellite_network_isls))
 
 def get_tcp_run_list():
     run_list = []
@@ -65,6 +77,8 @@ def get_tcp_run_list():
                 "from_id": p[1],
                 "to_id": p[2],
                 "tcp_socket_type": p[3],
+                "n_bg_flows": 200,
+                "pingmesh_interval_ns": pingmesh_interval_ns,
             },
         ]
     return run_list

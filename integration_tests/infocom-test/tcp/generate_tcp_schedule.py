@@ -12,6 +12,71 @@ SEED_FROM_TO = random.randint(0, 100000000)
 SEED_FLOW_SIZE = random.randint(0, 100000000)
 
 
+def generate_required_tcp_schedule(
+    start_id,
+    end_id,
+    duration_seconds,
+    source_ids,
+    dst_ids,
+    n_bg_flows,
+    output_dir='.',
+    gs_path='.',
+    ep_filepath=None,
+):
+    """
+    @param start_id: the first id of the end-point id range
+    @param end_id: the last id of the end-point id range
+    @param duration_seconds: range of flow start time from 0 ns
+    @param source_ids: the list of source ids that we want to log
+    @param dst_ids: the list of destination ids that we want to log
+    @param n_bg_flows: number of background flows to simulate congestion, and we do not want to log them.
+    @param output_dir: the path to store the generated TCP schedule.
+    @param gs_path: the path to ground_stations.txt
+    @param bg_ep_filepath: the file path to the end-point pairs for background flows
+    @return: end-point pairs and flow ids for the measurement flows
+    """
+
+    # number of measurement flows will be the production of number of sources and destinations
+    n_ms_flows = len(source_ids) * len(dst_ids)
+    servers = set(range(start_id, end_id + 1))
+    list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
+    num_starts = len(list_start_time_ns)
+
+    list_from_to = []
+
+    # Forge measurement flows using srouce and dst ids
+    for _src in source_ids:
+        for _dst in dst_ids:
+            # the _src, _dst here are still the ground station id, convert it to absolute id 
+            list_from_to.append((_src + start_id, _dst + start_id))
+    ms_flow_endpoints = list_from_to.copy()
+    ms_flow_ids = list(range(n_ms_flows))
+
+    # Ramdonly generate background flows
+    # !!! A potential bug: the ''generate_bg_flows_by_user_distribution'' might generate measurement flows,
+    # which can cause duplication
+    bg_end_point_pairs = generate_bg_flows_by_user_distribution(n_bg_flows, gs_path, start_id)
+    list_from_to = list_from_to + bg_end_point_pairs
+
+    for i in range(len(ms_flow_ids)):
+        if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
+            raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
+        
+    list_flow_size_byte = generate_flow_size_in_byte(num_starts)
+    tcp_schedule_filename = output_dir + "/schedule.csv"
+    write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, tcp_schedule_filename)
+
+    print("{} TCP measurement flows and {} TCP background flows are generated at {}."
+          .format(n_ms_flows, n_bg_flows, output_dir ))
+
+    ms_flow_id_filename = output_dir + "/ms_flow_ids.txt"
+    write_ms_flow_ids(ms_flow_ids, ms_flow_id_filename)
+
+    print("TCP measurement flow IDs are written to {}.".format(ms_flow_id_filename))
+
+    return ms_flow_endpoints, ms_flow_ids
+
+
 def generate_tcp_schedule(
         start_id,
         end_id,

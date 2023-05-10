@@ -88,7 +88,7 @@ for dynamic_state_algorithm in [
 
     # Specific outcomes
     output_generated_data_dir = "temp/gen_data"
-    num_threads = 1
+    num_threads = 20
     time_step_ms = 100
     duration_s = 200
 
