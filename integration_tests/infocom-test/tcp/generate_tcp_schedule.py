@@ -39,7 +39,12 @@ def generate_required_tcp_schedule(
     # number of measurement flows will be the production of number of sources and destinations
     n_ms_flows = len(source_ids) * len(dst_ids)
     servers = set(range(start_id, end_id + 1))
-    list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
+
+    # generate Poisson distribution start time
+    # list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
+
+    # All start from zero
+    list_start_time_ns = [0] * (n_ms_flows + n_bg_flows)
     num_starts = len(list_start_time_ns)
 
     list_from_to = []
@@ -62,7 +67,12 @@ def generate_required_tcp_schedule(
         if list_from_to[ms_flow_ids[i]] != ms_flow_endpoints[i]:
             raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
         
-    list_flow_size_byte = generate_flow_size_in_byte(num_starts)
+    # Generate data size randomly
+    # list_flow_size_byte = generate_flow_size_in_byte(num_starts)
+
+    # Generate fixed data size
+    list_flow_size_byte = [1e8] * (n_ms_flows + n_bg_flows)
+
     tcp_schedule_filename = output_dir + "/schedule.csv"
     write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, tcp_schedule_filename)
 

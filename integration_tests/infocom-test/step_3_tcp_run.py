@@ -29,7 +29,7 @@ except (ImportError, SystemError):
     from run_list import *
 
 local_shell = exputil.LocalShell()
-max_num_processes = 20
+max_num_processes = 6
 
 # Check that no screen is running
 if local_shell.count_screens() != 0:
@@ -50,9 +50,6 @@ for run in get_tcp_run_list():
         "2>&1 | "
         "tee '../../integration_tests/infocom-test/" + logs_ns3_dir + "/console.txt'"
     )
-
-
-# zhy: the max_num_processes in here is useless, the commands_to_run only have one command
 
 # Run the commands
 print("Running commands (at most %d in parallel)..." % max_num_processes)

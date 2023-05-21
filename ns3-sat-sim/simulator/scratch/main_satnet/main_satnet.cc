@@ -82,10 +82,10 @@ int main(int argc, char *argv[]) {
     PingmeshScheduler pingmeshScheduler(basicSimulation, topology); // Requires enable_pingmesh_scheduler=true
 
     //topology->CollectISLDeviceQueueLength();
-    topology->CollectGSLDeviceQueueLength();
+    // topology->CollectGSLDeviceQueueLength();
 
     //topology->CollectISLDelay();
-    topology->CollectGSLDelay();
+    // topology->CollectGSLDelay();
 
     // Run simulation
     basicSimulation->Run();
@@ -101,12 +101,12 @@ int main(int argc, char *argv[]) {
     pingmeshScheduler.WriteResults();
 
     // Collect utilization statistics
-    topology->CollectUtilizationStatistics();
+    // topology->CollectUtilizationStatistics();
 
     //topology->GetISLDeviceQueueLength();
     //topology->GetISLDelay();
-    topology->GetGSLDeviceQueueLength();
-    topology->GetGSLDelay();
+    // topology->GetGSLDeviceQueueLength();
+    // topology->GetGSLDelay();
 
     // Finalize the simulation
     basicSimulation->Finalize();
