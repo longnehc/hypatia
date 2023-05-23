@@ -29,7 +29,7 @@ except (ImportError, SystemError):
     from run_list import *
 
 local_shell = exputil.LocalShell()
-max_num_processes = 6
+max_num_processes = 16
 
 # Check that no screen is running
 if local_shell.count_screens() != 0:

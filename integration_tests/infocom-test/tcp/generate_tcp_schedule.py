@@ -41,12 +41,12 @@ def generate_required_tcp_schedule(
     servers = set(range(start_id, end_id + 1))
 
     # generate Poisson distribution start time
-    # list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
+    list_start_time_ns = generate_start_time_ns(duration_seconds, n_ms_flows, n_bg_flows)
 
     # All start from zero
-    list_start_time_ns = [0] * (n_ms_flows + n_bg_flows)
-    num_starts = len(list_start_time_ns)
+    # list_start_time_ns = [0] * (n_ms_flows + n_bg_flows)
 
+    num_starts = len(list_start_time_ns)
     list_from_to = []
 
     # Forge measurement flows using srouce and dst ids
@@ -71,7 +71,8 @@ def generate_required_tcp_schedule(
     # list_flow_size_byte = generate_flow_size_in_byte(num_starts)
 
     # Generate fixed data size
-    list_flow_size_byte = [1e8] * (n_ms_flows + n_bg_flows)
+    data_per_flow = 1000 * 1e6  #1000 MB
+    list_flow_size_byte = [data_per_flow] * (n_ms_flows + n_bg_flows)
 
     tcp_schedule_filename = output_dir + "/schedule.csv"
     write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, tcp_schedule_filename)
