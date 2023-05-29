@@ -58,22 +58,23 @@ dynamic_state = "dynamic_state_infocom_test"
 #                  ([100], [103]),     # California / San-Francisco
 #                  ]
 
-# Sami's scr-dst pair with simple ground station:
 scr_dst_pairs = [
-                 ([6], [8]),    # Cape Town
-                 ([6], [2]),     # Mumbai
-                 ([6], [4]),    # Singapore
-                 ([6], [5]),    # Sydney
-                 ([6], [0]),     # Tokyo
-                 ([6], [3]),     # London
-                 ([6], [9]),     # Bahrain / Ad-Dammam
-                 ([6], [1]),     # Sao Paulo
-                 ([6], [7]),     # California / San-Francisco
+                 ([100], [104, 4, 63, 84, 0, 27, 105, 3, 103])
                  ]
 
+# Sami's scr-dst pair with simple ground station:
 # scr_dst_pairs = [
-#                  ([100], [101, 60, 102, 103, 56, 74, 50, 84, 27, 6, 0]),
+#                  ([6], [8]),    # Cape Town
+#                  ([6], [2]),     # Mumbai
+#                  ([6], [4]),    # Singapore
+#                  ([6], [5]),    # Sydney
+#                  ([6], [0]),     # Tokyo
+#                  ([6], [3]),     # London
+#                  ([6], [9]),     # Bahrain / Ad-Dammam
+#                  ([6], [1]),     # Sao Paulo
+#                  ([6], [7]),     # California / San-Francisco
 #                  ]
+
 
 
 # scr_dst_pairs = [
@@ -96,14 +97,14 @@ def get_tcp_run_list():
                 "dynamic_state": dynamic_state,
                 "dynamic_state_update_interval_ns": dynamic_state_update_interval_ns,
                 "simulation_end_time_ns": simulation_end_time_ns,
-                "data_rate_megabit_per_s": 150.0,
+                "data_rate_megabit_per_s": 10.0,
                 "queue_size_pkt": 100,
                 "enable_isl_utilization_tracking": enable_isl_utilization_tracking,
                 "isl_utilization_tracking_interval_ns": isl_utilization_tracking_interval_ns,
                 "from_id": p[1],
                 "to_id": p[2],
                 "tcp_socket_type": p[3],
-                "n_bg_flows": 50,      # Test 1000 or larger
+                "n_bg_flows": 4000,      # Test 1000 or larger
                 "pingmesh_interval_ns": pingmesh_interval_ns,
             },
         ]

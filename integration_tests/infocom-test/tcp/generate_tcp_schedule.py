@@ -68,11 +68,11 @@ def generate_required_tcp_schedule(
             raise AssertionError("Measurement flow IDs mismatch their endpoint pairs.")
         
     # Generate data size randomly
-    # list_flow_size_byte = generate_flow_size_in_byte(num_starts)
+    list_flow_size_byte = generate_flow_size_in_byte(num_starts)
 
     # Generate fixed data size
-    data_per_flow = 1000 * 1e6  #1000 MB
-    list_flow_size_byte = [data_per_flow] * (n_ms_flows + n_bg_flows)
+    # data_per_flow = 1000 * 1e6  #1000 MB
+    # list_flow_size_byte = [data_per_flow] * (n_ms_flows + n_bg_flows)
 
     tcp_schedule_filename = output_dir + "/schedule.csv"
     write_tcp_schedule(num_starts, list_from_to, list_flow_size_byte, list_start_time_ns, tcp_schedule_filename)

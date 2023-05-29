@@ -29,7 +29,7 @@ except (ImportError, SystemError):
     from run_list import *
 
 local_shell = exputil.LocalShell()
-max_num_processes = 16
+max_num_processes = 1
 
 # Check that no screen is running
 if local_shell.count_screens() != 0:
@@ -46,7 +46,7 @@ for run in get_tcp_run_list():
     commands_to_run.append(
         "cd ../../ns3-sat-sim/simulator; "
         "./waf --run=\"main_satnet "
-        "--run_dir='../../integration_tests/infocom-test/temp/runs/" + run["name"] + "'\" "
+        "--run_dir='../../integration_tests/infocom-test/temp/runs/" + run["name"] + "'\" --jobs=32 "
         "2>&1 | "
         "tee '../../integration_tests/infocom-test/" + logs_ns3_dir + "/console.txt'"
     )
